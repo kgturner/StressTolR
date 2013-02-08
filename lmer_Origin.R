@@ -201,8 +201,8 @@ anova(modelO,model1) #test for significance of origin - origin not sig!
 # model1<-lmer(BoltDate ~ Origin * CrownDiam.mm+(CrownDiam.mm|PopID/Mom), family=poisson,data=modeldata)
 # model2<-lmer(BoltDate ~ Origin * CrownDiam.mm+(CrownDiam.mm|PopID), family=poisson,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
 # model3<-lmer(BoltDate ~ Origin * CrownDiam.mm+(CrownDiam.mm|blank), family=poisson,data=modeldata) # Test population effect
-# anova(model2,model1) # mom sig
-# anova(model3,model2) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
+# anova(model2,model1)
+# anova(model3,model2) 
 # 
 # modelInt<-lmer(BoltDate ~ Origin + CrownDiam.mm+(CrownDiam.mm|PopID/Mom), family=poisson,data=modeldata)
 # anova(modelInt,model1) #test for significant interaction btw Origin and Bolted - not sig
@@ -210,12 +210,12 @@ anova(modelO,model1) #test for significance of origin - origin not sig!
 # modelC0<-lmer(BoltDate ~ Origin + (1|PopID/Mom), family=poisson,data=modeldata)
 # modelC1 <- lmer(BoltDate ~ Origin + (CrownDiam.mm|PopID/Mom), family=poisson,data=modeldata)
 # modelC2 <- lmer(BoltDate ~ Origin + CrownDiam.mm+(1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelC0, modelInt)#test for sig of crown - crown not sig
+# anova(modelC0, modelInt)
 # anova(modelC1, modelInt)
 # anova(modelC2,modelInt)
 # 
 # modelO<-lmer(BoltDate ~ CrownDiam.mm + (CrownDiam.mm|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelO,modelInt) #test for significance of origin - origin not sig!
+# anova(modelO,modelInt) 
 
 ###Control, boltedatH, binomial, bolt.bin###
 #all plants, not just bolters
