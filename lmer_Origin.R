@@ -55,6 +55,9 @@ modelOraw<-lmer(ShootMass.gA ~ (1|PopID/Mom), family=gaussian,data=modeldata)
 anova(modelOraw,model1raw) #test for significance of origin - origin only marginally sig....!
 model1raw
 
+qqnorm(resid(model1raw), main="Q-Q plot for resid ST al shoot")
+qqline(resid(model1raw))
+
 ####allo, root mass, mom sig, do by hand###
 modeldata<-al[!is.na(al$RootA.log),]
 modeldata$blank<-1
@@ -85,6 +88,9 @@ anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what y
 modelOraw<-lmer(CrownDiam.mmA ~ (1|PopID/Mom), family=gaussian,data=modeldata)
 anova(modelOraw,model1raw) #test for significance of origin - origin only marginally sig....!
 model1raw
+
+qqnorm(resid(model1raw), main="Q-Q plot for resid ST al crown")
+qqline(resid(model1raw))
 
 #####m1, Origin only#####
 m1<-read.table("STm1subset.txt", header=T, sep="\t", quote='"', row.names=1) #m1subset
@@ -137,6 +143,8 @@ coP <- lapply(names(co)[c(10,27)],function(n) CGtrait.LR.O(n,co, family=poisson)
 
 comodels <- CGtrait.models.O("RootH.log",co)
 comodels
+qqnorm(resid(comodels$model2), main="Q-Q plot for resid ST ctrl root.log")
+qqline(resid(comodels$model2))
 
 ####harvest control, lf count#####
 modeldata<-co[!is.na(co$LfCountH),]
@@ -259,10 +267,27 @@ nLR #check out LRs of models. Model progression logical?
 nmodels <- CGtrait.models.O("ShootMass.g",n)
 # nmodels2 <- CGtrait.models.int("RootH.log",n)
 nmodels
-# nRoot.lmer <- nmodels$model2
-# nRootlog.lmer <- nmodels2$model2
-# qqnorm(resid(nRootlog.lmer), main="Q-Q plot for residuals")
-# qqline(resid(nRootlog.lmer))
+qqnorm(resid(nmodels$model2), main="Q-Q plot for resid ST nut shoot")
+qqline(resid(nmodels$model2))
+
+#transform nut shoot
+modeldata<-n[!is.na(n$ShootMass.g),]
+modeldata$blank<-1
+modeldata$blank<-as.factor(modeldata$blank)
+modeldata$Mom<-as.factor(modeldata$Mom)
+modeldata$shoot.log <- log(modeldata$ShootMass.g)
+
+model1 <- lmer(shoot.log ~ Origin +(1|PopID/Mom), family=gaussian,data=modeldata)
+model2<-lmer(shoot.log ~ Origin +(1|PopID), family=gaussian,data=modeldata)
+model3<- lmer(shoot.log ~ Origin +(1|blank), family=gaussian,data=modeldata)
+anova(model1,model2)
+anova(model3, model2)
+
+modelO <-lmer(shoot.log ~ (1|PopID), family=gaussian,data=modeldata)
+anova(modelO,model2)
+
+qqnorm(resid(model3), main="Q-Q plot for resid ST nut shoot.log")
+qqline(resid(model3))
 
 #non-gaussian?
 # n <- cbind(n, bolt.bin=as.numeric(n$BoltedatH)-1)
@@ -556,3 +581,5 @@ modelO<-lmer(AvgGermDate.log ~ (1|PopID), family=gaussian,data=modeldata)
 anova(modelO,model2) #test for significance of origin - origin not sig....?
 
 model2
+qqnorm(resid(model2), main="Q-Q plot for resid ST mom avgGerm.log")
+qqline(resid(model2))
