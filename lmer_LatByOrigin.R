@@ -216,11 +216,11 @@ anova(model3,model2) # pop is sig. If it says there are 0 d.f. then what you wan
 modelI<-lmer(BoltDate ~ Origin + Latitude +(1|PopID/Mom), family=poisson,data=modeldata)
 anova(modelI, model1)
 
-# modelL<-lmer(BoltDate ~ Origin + (1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelL, model1)
-# 
-# modelO<-lmer(BoltDate ~  (1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelO,modelL) #test for significance of origin - origin not sig!
+modelL<-lmer(BoltDate ~ Origin + (1|PopID/Mom), family=poisson,data=modeldata)
+anova(modelL, modelI)
+
+modelO<-lmer(BoltDate ~  (1|PopID/Mom), family=poisson,data=modeldata)
+anova(modelO,modelL) #test for significance of origin - origin not sig!
 
 ###control boltedatH, mom sig, do by hand, binomial
 #all plants, not just bolters
@@ -259,7 +259,7 @@ n<-read.table("STNutsubset.txt", header=T, sep="\t", quote='"', row.names=1) #nu
 head(n)
 # xtabs(~Origin+BoltedatH, modeldata) # no invasives bolted.........
 # modeldata<-modeldata[modeldata$BoltedatH!="y",]#remove 7 bolted plants from nat SHOULD I???
-nLR <- lapply(names(n)[c(11:12, 15:17, 50:51)],function(x) CGtrait.LR.int(x,n)) 
+nLR <- lapply(names(n)[c(11:12, 15:17, 49:51)],function(x) CGtrait.LR.int(x,n)) 
 #lflgthH, lfwdthH, crown, shoot, root, root.log (pick one!)lxwH, all gaussian
 names(nLR) <- names(al)[c(11:12, 15:17, 50:51)]
 nLR #check out LRs of models. Model progression logical?
@@ -298,6 +298,30 @@ anova(modelL, model1raw)
 
 modelOraw<-lmer(LfCountH ~ Latitude +(1|PopID/Mom), family=poisson,data=modeldata)
 anova(modelOraw,model1raw) #test for significance of origin - origin NOT sig....!
+
+##nut def, shoot.log##
+modeldata<-n[!is.na(n$ShootH.log),]
+modeldata$blank<-1
+modeldata$blank<-as.factor(modeldata$blank)
+modeldata$Mom<-as.factor(modeldata$Mom)
+
+model1raw<-lmer(ShootH.log ~ Origin * Latitude + (1|PopID/Mom), family=gaussian,data=modeldata)
+model2raw<-lmer(ShootH.log ~ Origin * Latitude +(1|PopID), family=gaussian,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
+model3raw<-lmer(ShootH.log ~ Origin * Latitude +(1|blank), family=gaussian,data=modeldata) # Test population effect
+anova(model2raw,model1raw) # mom not sig
+anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
+
+modelI <- lmer(ShootH.log ~ Origin + Latitude + (1|PopID), family=gaussian,data=modeldata)
+anova(modelI, model2raw)
+
+modelL <- lmer(ShootH.log ~ Origin +(1|PopID), family=gaussian,data=modeldata)
+anova(modelL, modelI)
+
+modelOraw<-lmer(ShootH.log ~ Latitude +(1|PopID), family=gaussian,data=modeldata)
+anova(modelOraw,modelI)
+
+modelO<-lmer(ShootH.log ~ (1|PopID), family=gaussian,data=modeldata)
+anova(modelO,modelL)
 
 ####Cut, Origin * Lat####
 cu<-read.table("STCutsubset.txt", header=T, sep="\t", quote='"', row.names=1) #cutsubset
@@ -355,9 +379,19 @@ anova(modelI, model3)
 
 modelL <- lmer(bolt.bin ~ Origin +(1|blank), family=binomial,data=modeldata)
 anova(modelL, model3)
+anova(modelI, modelL)
+modelL
 
 modelO<-lmer(bolt.bin ~ Latitude+(1|blank), family=binomial,data=modeldata)
 anova(modelO,model3) #test for significance of origin - origin sig!
+anova(modelO, modelI)
+
+modelO2<- lmer(bolt.bin ~ (1|blank), family=binomial,data=modeldata)
+anova(modelL, modelO2)
+
+modelP <- lmer(bolt.bin ~ Origin + (1|PopID), family = binomial, data=modeldata)
+anova(modelP, modelL)
+
 model3
 
 int<--172.961 #inv mean
