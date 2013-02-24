@@ -485,7 +485,7 @@ anova(model3,model2) # pop is sig. If it says there are 0 d.f. then what you wan
 modelO<-lmer(Death ~ (1|PopID/Mom), family=poisson,data=modeldata)
 anova(modelO,model1) #test for significance of origin - origin not sig!
 
-####Mom, Origin * Lat####
+####Mom, Origin ####
 mom<-read.table("STMomsubset.txt", header=T, sep="\t", quote='"', row.names=1) #momsubset
 head(mom)
 # momLR <- lapply(names(mom)[c(5:6,13, 17)],function(n) CGtrait.LR(n,mom)) #can't use func, because mom doesn't have Mom
@@ -579,6 +579,9 @@ anova(model3,model2) # pop is sig. If it says there are 0 d.f. then what you wan
 
 modelO<-lmer(AvgGermDate.log ~ (1|PopID), family=gaussian,data=modeldata)
 anova(modelO,model2) #test for significance of origin - origin not sig....?
+
+modelW<-lmer(AvgGermDate.log ~ Origin + SeedWt +(1|PopID), family=gaussian,data=modeldata)
+anova(modelW, model2)
 
 model2
 qqnorm(resid(model2), main="Q-Q plot for resid ST mom avgGerm.log")

@@ -544,7 +544,7 @@ summary(d[d$Origin=="nat",]$Wilt)
 f<-read.table("STFloodsubset.txt", header=T, sep="\t", quote='"', row.names=1) #floodsubset
 head(f)
 #no gaussian
-fLR <- lapply(names(f)[20:21],function(n) CGtrait.LR.int(n,f, family=poisson)) #death, floatdate, all poisson
+fLR <- lapply(names(f)[19:21],function(n) CGtrait.LR.int(n,f, family=poisson)) #death, floatdate, all poisson
 # names(fLR) <- names(f)[20:21]
 # 
 # fmodels <- lapply(names(f)[20:21],function(n) CGtrait.models(n,f))
@@ -569,6 +569,27 @@ anova(modelI,model3) #test for significant interaction btw Origin and Bolted - n
 # 
 # modelO<-lmer(FloatDate ~ (LfLgth1|PopID), family=poisson,data=modeldata)
 # anova(modelO,modelL2) #test for significance of origin - origin not sig
+
+####Flood, yellow####
+modeldata<-f[!is.na(f$Yellow),]
+modeldata$blank<-1
+modeldata$blank<-as.factor(modeldata$blank)
+modeldata$Mom<-as.factor(modeldata$Mom)
+
+model1<-lmer(Yellow ~ Origin * Latitude +(1|PopID/Mom), family=poisson,data=modeldata)
+model2<-lmer(Yellow ~ Origin * Latitude +(1|PopID), family=poisson,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
+model3<-lmer(Yellow ~ Origin * Latitude +(1|blank), family=poisson,data=modeldata) # Test population effect
+anova(model2,model1) # mom sig
+anova(model3,model2) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
+
+modelI<-lmer(Yellow ~ Origin + Latitude +(1|PopID), family=poisson,data=modeldata)
+anova(modelI,model3) #test for significant interaction btw Origin and Bolted - not sig
+
+modelL <- lmer(Yellow ~ Origin + (1|PopID), family=poisson,data=modeldata)
+anova(modelL, modelI)
+
+modelO<-lmer(Yellow ~ (1|PopID), family=poisson,data=modeldata)
+anova(modelO,modelL) #test for significance of origin - origin not sig
 
 ####Mom, Origin * Lat####
 mom<-read.table("STMomsubset.txt", header=T, sep="\t", quote='"', row.names=1) #momsubset
