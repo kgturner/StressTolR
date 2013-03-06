@@ -539,6 +539,32 @@ pN
 summary(d[d$Origin=="inv",]$Wilt)
 summary(d[d$Origin=="nat",]$Wilt)
 
+#drought, total wilt
+modeldata<-d[!is.na(d$TotWilt),]
+modeldata$blank<-1
+modeldata$blank<-as.factor(modeldata$blank)
+modeldata$Mom<-as.factor(modeldata$Mom)
+
+model1<-lmer(TotWilt ~ Origin * Latitude +(1|PopID/Mom), family=poisson,data=modeldata)
+model2<-lmer(TotWilt ~ Origin * Latitude +(1|PopID), family=poisson,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
+model3<-lmer(TotWilt ~ Origin * Latitude +(1|blank), family=poisson,data=modeldata) # Test population effect
+anova(model2,model1) # mom sig
+anova(model3,model2) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
+
+modelI<-lmer(TotWilt ~ Origin + Latitude +(1|PopID), family=poisson,data=modeldata)
+anova(modelI,model2) #test for significant interaction btw Origin and Bolted - not sig
+
+modelL <- lmer(TotWilt ~ Origin +(1|PopID), family=poisson,data=modeldata)
+anova(modelL, modelI)
+modelO<-lmer(TotWilt ~ Latitude+(1|PopID), family=poisson,data=modeldata)
+anova(modelO,modelI) #test for significance of origin - origin not sig!
+modelI
+int<-2.591741#inv mean
+B<-0.061169#Originnat estimate from model summary
+pI<-exp(int)
+pN<-exp(int+B)
+pI
+pN
 
 ####Flood, Origin * Lat####
 f<-read.table("STFloodsubset.txt", header=T, sep="\t", quote='"', row.names=1) #floodsubset
