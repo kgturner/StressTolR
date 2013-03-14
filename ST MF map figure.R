@@ -4,6 +4,9 @@
 
 library(maps)
 library(mapdata)
+library(maptools)  # For working with shapefiles.
+library(scales)
+library(mapproj)
 
 #inv map
 map("worldHires","Canada", xlim=c(-130,-100), ylim=c(30,55), col="gray90", fill=TRUE)
@@ -28,7 +31,25 @@ points(projPoints, pch=popInv$pch, col="blue", cex=1)  # For some reason this wo
 lim <- c(-130,-100,30,55) # Creating the boundaries for the command below, based on the boundaries set up using the "map" command above.
 map.grid(lim,nx=14,ny=7,labels=TRUE,pretty=TRUE, cex=0.5, col="blue")
 
+#nat map
 
+map("worldHires","Bulgaria", xlim=c(10,60), ylim=c(30,65), col="gray95", fill=TRUE)
+map("worldHires","USSR", xlim=c(10,60), ylim=c(30,65), col="gray95", fill=TRUE, add=TRUE)
+map("worldHires","Turkey", xlim=c(10,60), ylim=c(30,65), col="gray95", fill=TRUE, add=TRUE)
+map("worldHires","Greece", xlim=c(10,60), ylim=c(30,65), col="gray95", fill=TRUE, add=TRUE)
+map("worldHires","Romania", xlim=c(10,60), ylim=c(30,65), col="gray95", fill=TRUE, add=TRUE)
+#map("worldHires","Ukraine", xlim=c(10,60), ylim=c(30,65), col="gray90", fill=TRUE)
+map("worldHires","Hungary", xlim=c(10,60), ylim=c(30,65), col="gray95", fill=TRUE, add=TRUE)
+
+# map("worldHires","Azerbaijan", xlim=c(10,60), ylim=c(30,65), col="gray90", fill=TRUE)
+# map("worldHires","Armenia", xlim=c(10,60), ylim=c(30,65), col="gray95", fill=TRUE, add=TRUE)
+# map("worldHires","Austria", xlim=c(10,60), ylim=c(30,65), col="gray95", fill=TRUE, add=TRUE)
+# map("worldHires","Belgium", xlim=c(10,60), ylim=c(30,65), col="gray95", fill=TRUE, add=TRUE)
+# map("worldHires","Great Britain", xlim=c(10,60), ylim=c(30,65), col="gray95", fill=TRUE, add=TRUE)
+
+
+
+points(popNat$Longitude, popNat$Latitude, pch=popNat$pch, col = "red", cex=1)
 #########################
 #vectors/df for maps
 pops <- levels(co$PopID)
@@ -73,3 +94,12 @@ MFpopInv$pch <- 15
 MompopInv$pch <- 1
 popInv <- merge(STpopInv, MFpopInv, all = TRUE)
 popInv <- merge(popInv, MompopInv, all = TRUE)
+write.csv(popInv, file = "InvPopCoord.csv", row.names = FALSE)
+#read.csv("foo.csv")
+
+STpopNat$pch <- 19
+MFpopNat$pch <- 15
+MompopNat$pch <- 1
+popNat <- merge(STpopNat, MFpopNat, all = TRUE)
+popNat <- merge(popNat, MompopNat, all = TRUE)
+write.csv(popNat, file = "NatPopCoord.csv", row.names = FALSE)
