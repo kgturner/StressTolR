@@ -711,6 +711,22 @@ write.table(m1, file="STm1subset.txt", sep="\t", quote=F)
 write.table(co, file="STControlsubset.txt", sep="\t", quote=F)
 #don't trust bolt max ht, flower number, bolt rate type data. Date and y/n bolt is good though!
 
+#####
+co$Rack <- as.factor(co$Rack)
+levels(co$Rack)
+
+d$Rack <- as.factor(d$Rack)
+levels(d$Rack)
+
+f$Rack <- as.factor(f$Rack)
+levels(f$Rack)
+
+n$Rack <- as.factor(n$Rack)
+levels(n$Rack)
+
+al$Rack <- as.factor(al$Rack)
+levels(al$Rack)
+
 ################################
 
 #at lat/long to des
