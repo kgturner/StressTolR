@@ -1,8 +1,8 @@
 #ST figure
 #box/whisker plots
 
-#aggregate data by treatment, make graphdata
-#aggregate(co, by=list(Origin=co$Origin),subset=co$LfCountH,mean)
+#make graphdata
+
 grdat <- merge(co, cu, all=TRUE)
 # grdat <- merge(grdat, d, all=TRUE)
 # grdat <- merge(grdat, f, all=TRUE)
@@ -37,18 +37,21 @@ grdat$Trt <- factor(grdat$Trt, c("Early Control", "Control", "Nutrient", "Herbiv
 head(m1)
 # ggplot(m1, aes(Origin, LfCount1, fill=Origin))+geom_boxplot()#two boxes
 # ggplot(m1, aes(factor(Rack), LfCount1, fill=Origin))+geom_boxplot()#many boxes
-p1 <- ggplot(grdat, aes(Trt, RootMass.g, fill=Origin))+geom_boxplot()+xlab("Stress Treatment")+ylab("Root Mass (g)")+ theme(legend.position="none")
-p1 <- p1 + annotate('point',x = "Control", y = 5, pch=16, color="red",parse=T)+annotate('point',x = "Nutrient", y = 5, pch=16, color="red",parse=T)+
-  annotate('point',x = "Herbivory", y = 5, pch=8, color="red",parse=T)
-
+# ggplot(grdat, aes(Trt, CrownDiam.mm, fill=Origin))+geom_boxplot()
+# ggplot(grdat, aes(Trt, lxwH, fill=Origin))+geom_boxplot()
 # ggplot(grdat, aes(Trt, ShootMass.g, fill=Origin))+geom_boxplot()
+
+pdf("ST size box1.pdf", useDingbats=FALSE)
+p1 <- ggplot(grdat,aes(Trt, RootMass.g, fill=Origin))+geom_boxplot()+xlab("Stress Treatment")+ylab("Root mass (g)")+ theme(legend.position="none")
+p1 <- p1 + annotate('point',x = "Control", y = 5, pch=16, color="red",parse=T)+annotate('point',x = "Nutrient", y = 5, pch=16, color="red",parse=T)+
+  annotate('point',x = "Herbivory", y = 5, pch=8, color="red",parse=T)+
+  theme(axis.text.x=element_text(size=10))
 p2 <- ggplot(grdat, aes(Trt, LfCountH, fill=Origin))+geom_boxplot()+xlab("Stress Treatment")+ylab("Number of basal leaves")+ theme(legend.justification=c(0,1), legend.position=c(0,1))
 #legend position(left/right,top/bottom)
 p2 <- p2 +  annotate('point',x = "Control", y = 30, pch=8, color="red",parse=T)+annotate('point',x = "Control", y = 32, pch=8, color="red",parse=T)
-# ggplot(grdat, aes(Trt, CrownDiam.mm, fill=Origin))+geom_boxplot()
-# ggplot(grdat, aes(Trt, lxwH, fill=Origin))+geom_boxplot()
-
 multiplot(p1,p2, cols=2)
+dev.off()
+
 
 #outlier check
 summary(cu$LfCountH)
@@ -61,12 +64,119 @@ n[n$LfCountH==72,]
 summary(co$LfCountH)
 co[co$LfCountH==64,]
 
-##plot LH traits
-ggplot(grdat, aes(Trt, BoltedatH, fill=Origin))+geom_bar(width=1)
+######plot LH traits#####
+#base graphics
+grdatB$Trt <- droplevels(grdatB$Trt)
+mosaicplot(~Trt +BoltedatH+Origin, data=grdatB, color=TRUE)
+mosaicplot(~BoltedatH+Origin+Trt, data=grdatB, color=TRUE)
+mosaicplot(~Trt/Origin +BoltedatH, data=grdatB, color=TRUE)
+mosaicplot(~Trt/BoltedatH+Origin, data=grdatB, color=TRUE)
+
+#ggplots
+#graph data, aggregate by treatment
+grdatB <- merge(co, cu, all=TRUE)
+# grdat <- merge(grdat, d, all=TRUE)
+# grdat <- merge(grdat, f, all=TRUE)
+grdatB <- merge(grdatB, n, all=TRUE)
+
+grBatH <- NULL
+grBatH
+grBatH2 <- ddply(grdatB, .(Trt, Origin), summarize, totcount = length(BoltedatH))
+grBatH3 <- ddply(grdatB, .(Trt, Origin, BoltedatH), summarize, count = length(BoltedatH))
+grBatH <- merge(grBatH2,grBatH3, all.y=TRUE)
+grBatH$Trt <- factor(grBatH$Trt, c("cont","nut def","cut"))
+grBatH$xmin <- 0
+grBatH$xmax <- 96
+grBatH[1:2,]$xmax<- 16
+grBatH[3:4,]$xmin<- 16
+grBatH[3:4,]$xmax<- 32
+grBatH[5:6,]$xmin<- 32
+grBatH[5:6,]$xmax<- 48
+grBatH[7:8,]$xmin<- 48
+grBatH[7:8,]$xmax<- 64
+grBatH[9,]$xmin<- 64
+grBatH[9,]$xmax<- 80
+grBatH[10:11,]$xmin<- 80
+# grBatH[10:11,]$xmax<- 50
+
+grBatH$Treatment <- paste(grBatH$Trt, grBatH$Origin, grBatH$BoltedatH)
+
+#percentages
+grBatHn <- grBatH[grBatH$BoltedatH=="n",]
+grBatHn<- ddply(grBatHn, .(Treatment), transform, ymax = cumsum(count/totcount*100))
+grBatHn <- ddply(grBatHn, .(Treatment), transform,
+                 ymin = ymax-(count/totcount*100))
+
+grBatHy <- grBatH[grBatH$BoltedatH=="y",]
+grBatHy<- ddply(grBatHy, .(Treatment), transform, ymax = 100)
+grBatHy <- ddply(grBatHy, .(Treatment), transform,
+                 ymin = ymax-cumsum(count/totcount*100))
+
+#absolute counts
+# grBatH1<- ddply(grBatH, .(Treatment), transform, ymax = cumsum(count))
+# grBatH1 <- ddply(grBatH1, .(Treatment), transform,
+#                 ymin = ymax-count)
+
+grBatH1 <- merge(grBatHn, grBatHy, all=TRUE)
+#ggplot(grBatH1, aes(ymin = ymin, ymax = ymax, xmin=xmin, xmax=xmax,fill=Treatment))+ geom_rect(colour = I("grey"))+ scale_x_continuous(breaks=seq(16,80,32),labels=c("Control", "Herbivory", "Nutrient"))
+
+#labels and tidying
+levels(grBatH1$Origin)[levels(grBatH1$Origin)=="inv"] <- "Invasive"
+levels(grBatH1$Origin)[levels(grBatH1$Origin)=="nat"] <- "Native"
+# grBatH1[grBatH1$xmax==100,]$xmax <- 96
+levels(grBatH1$BoltedatH)[levels(grBatH1$BoltedatH)=="n"] <- "Not Bolted"
+levels(grBatH1$BoltedatH)[levels(grBatH1$BoltedatH)=="y"] <- "Bolted"
+# origins <- c("Invasive", "Native","Invasive", "Native","Invasive", "Native")
+
+pdf("ST bolted mosaic.pdf", useDingbats=FALSE)
+p1 <- ggplot(grBatH1, aes(ymin = ymin, ymax = ymax, xmin=xmin, xmax=xmax, fill=Treatment))+ geom_rect(colour = I("grey"), size=1.5)+
+  scale_x_continuous(breaks=seq(16,80,32),labels=c("Control", "Herbivory", "Nutrient"), name="Stress Treatments")+
+  scale_y_continuous(name="Percent Bolted at Harvest")
+ 
+p1 + annotate(geom="text", x=grBatH1$xmin+8, y=105, label=grBatH1$Origin, size=3) +
+  annotate(geom="text", x=grBatH1$xmin+8, y=grBatH1$ymin+2, label=grBatH1$BoltedatH, size=2)+ 
+  theme(legend.position="none", axis.title.x = element_text(size=15, face="bold", vjust=-0.4), 
+        axis.title.y = element_text(size=15, face="bold"),axis.text.x = element_text(size=15 ))+ 
+  annotate('point',x = 16, y = 101, pch=8, color="red",parse=T, size=3)+annotate('point',x = 18, y = 101, pch=8, color="red",parse=T, size=3)+annotate('point',x = 14, y = 101, pch=8, color="red",parse=T, size=3)+
+  annotate('point',x = 48, y = 101, pch=8, color="red",parse=T,size=3)+annotate('point',x = 46, y = 101, pch=8, color="red",parse=T,size=3)+annotate('point',x = 50, y = 101, pch=8, color="red",parse=T,size=3)
+dev.off()
+
+###works to here, change colors or shading???
+grBatH1$chrom <- 100
+grBatH1[grBatH1$Boltedat=="y",]$chrom <- 50
+grBatH1$color <- c(30, 35,45,50,90, 105,110,60,65,75,80)
+# grBatH1 <- rbind(grBatH1, c("nut def", "inv",81, "y",0, 64, 80, "nut def inv y", 100.00000,  100.00000, 10,"#56B4E9"))
+grBatH1$Treatment <- as.factor(grBatH1$Treatment)
+# grBatH1$chrom <- as.integer(grBatH1$chrom)
+# grBatH1$color <- as.factor(grBatH1$color)
+grBatH1
+str(grBatH1)
+
+#  
+#
+# 
+# grid.text(expression(paste("ES " %+-% " ci")), x = 0.78,   y = .92,
+#           gp = gpar(fontface = "italic", fontsize = 18))
+# + scale_fill_hue(l=45, c=grBatH1$chrom)
+# +scale_fill_brewer(palette="OrRd")
+# 
+#ggplot(grBatH, aes(Trt, BoltedatH, fill=Origin))+geom_bar(width=1)
+
+
 #p <- ggplot(dfml, aes(ymin=ymin, ymax=ymax, xmin=xmin, xmax=xmax, fill=variable))
 
 # p <- ggplot(dfml, aes(ymin=ymin, ymax=ymax, xmin=xmin, xmax=xmax, fill=variable))
-# graph <- p + geom_rect(colour = I("black")) + xlab("Seed Types") + ylab("Proportion of subplots") + theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(), axis.title.x = element_text(size=15, face="bold", vjust=-0.4), axis.title.y = element_text(size=15, face="bold", vjust=-0.001), axis.text.x = element_text(size=8, angle=0, color="black"), axis.text.y = element_text(size=8, color="black"), legend.title = element_text(size=20), legend.text = element_text(size=15), axis.ticks=element_blank(), panel.background = element_rect(fill='white', colour='white'), plot.margin = unit(c(1.5, 1, 1, 1), units="cm")) + scale_x_discrete(breaks=xaxisbreaks, labels=xaxislabels) + scale_fill_discrete(name="Number of \nSeedlings") + coord_cartesian(ylim=c(0, 45), xlim=xaxislength)
+# graph <- p + geom_rect(colour = I("black")) + xlab("Seed Types") + ylab("Proportion of subplots") +
+#   theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(), 
+#         axis.title.x = element_text(size=15, face="bold", vjust=-0.4), 
+#         axis.title.y = element_text(size=15, face="bold", vjust=-0.001), 
+#         axis.text.x = element_text(size=8, angle=0, color="black"), 
+#         axis.text.y = element_text(size=8, color="black"), 
+#         legend.title = element_text(size=20), legend.text = element_text(size=15), 
+#         axis.ticks=element_blank(), panel.background = element_rect(fill='white', colour='white'), 
+#         plot.margin = unit(c(1.5, 1, 1, 1), units="cm")) +
+#   scale_x_discrete(breaks=xaxisbreaks, labels=xaxislabels) + scale_fill_discrete(name="Number of \nSeedlings") + 
+#   coord_cartesian(ylim=c(0, 45), xlim=xaxislength)
 # 
 # graph + annotate(geom="text", x=xes, y=ys, label=labs, size=2) + theme(legend.position="none")
 
