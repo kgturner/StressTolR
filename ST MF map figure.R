@@ -64,10 +64,16 @@ plot(newmap,xlim = c(-10, 70), ylim = c(80, 95),asp = 1)
 library(rgdal) # Commands for reprojecting the vector data.
 library(rworldmap) # Recently updated mapping program.
 library(rworldxtra) # Add-ons for rworldmap.
-par(mai=c(0,0,0.2,0),xaxs="i",yaxs="i") # Determines the width of the margins for the map; the "i" designations make the map go to the edge of the plot window.
-sPDF <- getMap()[-which(getMap()$ADMIN=='Antarctica')] # sPDF stands for spatial polygons dataframe (the map); this command also Excludes Antarctica (otherwise it crashes).
-sPDF <- spTransform(sPDF, CRS=CRS("+proj=robin +ellps=WGS84")) # Transform from the default rworldmap projection to the Robinson projection.
-mapCountryData(sPDF, nameColumnToPlot="continent", mapTitle='rworldmap sucks', colourPalette='heat', addLegend = FALSE)
+par(mai=c(0,0,0.2,0),xaxs="i",yaxs="i") 
+# Determines the width of the margins for the map; 
+#the "i" designations make the map go to the edge of the plot window.
+sPDF <- getMap()[-which(getMap()$ADMIN=='Antarctica')] 
+# sPDF stands for spatial polygons dataframe (the map); 
+#this command also Excludes Antarctica (otherwise it crashes).
+sPDF <- spTransform(sPDF, CRS=CRS("+proj=robin +ellps=WGS84")) 
+# Transform from the default rworldmap projection to the Robinson projection.
+mapCountryData(sPDF, nameColumnToPlot="continent", mapTitle='rworldmap', 
+               colourPalette='heat', addLegend = FALSE)
 
 
 

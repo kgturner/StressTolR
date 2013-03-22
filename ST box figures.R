@@ -128,11 +128,16 @@ levels(grBatH1$BoltedatH)[levels(grBatH1$BoltedatH)=="n"] <- "Not Bolted"
 levels(grBatH1$BoltedatH)[levels(grBatH1$BoltedatH)=="y"] <- "Bolted"
 # origins <- c("Invasive", "Native","Invasive", "Native","Invasive", "Native")
 
+
+mycolors = c("red","#FFAA00")
+colorval = c(1,2,2,2,1,1)
+fill = mycolors[colorval]
+
 pdf("ST bolted mosaic.pdf", useDingbats=FALSE)
-p1 <- ggplot(grBatH1, aes(ymin = ymin, ymax = ymax, xmin=xmin, xmax=xmax, fill=Treatment))+ geom_rect(colour = I("grey"), size=1.5)+
+p1 <- ggplot(grBatH1, aes(ymin = ymin, ymax = ymax, xmin=xmin, xmax=xmax, fill=mycolors[colorval]))+ geom_rect(colour = I("grey"), size=1.5)+
   scale_x_continuous(breaks=seq(16,80,32),labels=c("Control", "Herbivory", "Nutrient"), name="Stress Treatments")+
   scale_y_continuous(name="Percent Bolted at Harvest")
- 
+p1
 p1 + annotate(geom="text", x=grBatH1$xmin+8, y=105, label=grBatH1$Origin, size=3) +
   annotate(geom="text", x=grBatH1$xmin+8, y=grBatH1$ymin+2, label=grBatH1$BoltedatH, size=2)+ 
   theme(legend.position="none", axis.title.x = element_text(size=15, face="bold", vjust=-0.4), 
@@ -142,6 +147,21 @@ p1 + annotate(geom="text", x=grBatH1$xmin+8, y=105, label=grBatH1$Origin, size=3
 dev.off()
 
 ###works to here, change colors or shading???
+col=as.numeric(grBatH1 $Trt) + 3* (as.numeric(grBatH1 $Origin)-1)
+alph= 1/as.numeric(grBatH1$BoltedatH)
+# set what ever colors you want here, 123 will be paired with 456
+colorset = c("red", "green", "blue", "darkred", "darkgreen", "darkblue")
+mycolors = colorset[col]
+grBatH1$colval = mycolors
+cscale = scale_fill_manual(values=colorset)
+p1 <- ggplot(grBatH1, aes(ymin = ymin, ymax = ymax, xmin=xmin, xmax=xmax, fill=colval , alpha = alph))+ 
+  geom_rect(colour = I("grey"), size=1.5)+
+  scale_x_continuous(breaks=seq(16,80,32),labels=c("Control", "Herbivory", "Nutrient"), name="Stress Treatments") +
+  scale_y_continuous(name="Percent Bolted at Harvest")
+
+p1
+
+
 grBatH1$chrom <- 100
 grBatH1[grBatH1$Boltedat=="y",]$chrom <- 50
 grBatH1$color <- c(30, 35,45,50,90, 105,110,60,65,75,80)
