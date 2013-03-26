@@ -50,6 +50,12 @@ map("worldHires","Hungary", xlim=c(10,60), ylim=c(30,65), col="gray95", fill=TRU
 
 
 points(popNat$Longitude, popNat$Latitude, pch=popNat$pch, col = "red", cex=1)
+
+
+#spTransform in rgdal
+
+
+
 #########################
 #vectors/df for maps
 pops <- levels(co$PopID)
