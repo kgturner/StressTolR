@@ -40,7 +40,7 @@ head(m1)
 # ggplot(grdat, aes(Trt, CrownDiam.mm, fill=Origin))+geom_boxplot()
 # ggplot(grdat, aes(Trt, lxwH, fill=Origin))+geom_boxplot()
 # ggplot(grdat, aes(Trt, ShootMass.g, fill=Origin))+geom_boxplot()
-
+###plot in color###
 pdf("ST size box1.pdf", useDingbats=FALSE)
 p1 <- ggplot(grdat,aes(Trt, RootMass.g, fill=Origin))+geom_boxplot()+xlab("Stress Treatment")+ylab("Root mass (g)")+ theme(legend.position="none")
 p1 <- p1 + annotate('point',x = "Control", y = 5, pch=16, color="red",parse=T)+annotate('point',x = "Nutrient", y = 5, pch=16, color="red",parse=T)+
@@ -52,17 +52,51 @@ p2 <- p2 +  annotate('point',x = "Control", y = 30, pch=8, color="red",parse=T)+
 multiplot(p1,p2, cols=2)
 dev.off()
 
+###plot in bw###
+# col= with( grBatH1, interaction(Origin, Trt, BoltedatH))
+# 
+colors()[c(312,336,350,366,1,176, 345)]
+# colorset <- c("grey51","grey75", "grey51","grey75", "grey51","grey75","white","white","white","white","white","white")
+# cscale = scale_fill_manual(values=colorset)
 
-#outlier check
-summary(cu$LfCountH)
-cu[cu$LfCountH==84,]
-cu[cu$PopID=="RU008",]
+pdf("ST size box_bw.pdf", useDingbats=FALSE)
+p1 <- ggplot(grdat,aes(Trt, RootMass.g, fill=Origin))+theme_bw()+
+  geom_boxplot()+
+  xlab("Stress Treatment")+ylab("Root mass (g)")+ 
+  theme(legend.position="none")+
+  scale_fill_manual(values=c("grey51","grey84"))
+p1 <- p1  + annotate('point',x = "Control", y = 5, pch=16, color="black",parse=T, size=4)+
+  annotate('point',x = "Nutrient", y = 5, pch=16, color="black",parse=T, size=4)+
+  annotate('point',x = "Herbivory", y = 5, pch=8, color="black",parse=T, size=4)+
+  theme(axis.title.x = element_text(size=15, face="bold", vjust=-0.4), 
+        axis.title.y = element_text(size=15, face="bold"),axis.text.x = element_text(size=12 ))
 
-summary(n$LfCountH)
-n[n$LfCountH==72,]
+p2 <- ggplot(grdat, aes(Trt, LfCountH, fill=Origin))+ theme_bw()+
+  geom_boxplot()+
+  xlab("Stress Treatment")+ylab("Number of basal leaves")+ 
+  theme(legend.justification=c(0,1), legend.position=c(0,1),
+        legend.title = element_text(size=14, face="bold"),legend.text = element_text(size = 13))+
+  scale_fill_manual(values=c("grey51","grey84"))
+#legend position(left/right,top/bottom)
+# 
+p2 <- p2 +  annotate('point',x = "Control", y = 30, pch=8, color="black",parse=T, size=4)+
+  annotate('point',x = "Control", y = 32, pch=8, color="black",parse=T, size=4)+
+  theme(axis.title.x = element_text(size=15, face="bold", vjust=-0.4), 
+        axis.title.y = element_text(size=15, face="bold"),axis.text.x = element_text(size=12 ))
 
-summary(co$LfCountH)
-co[co$LfCountH==64,]
+multiplot(p1,p2, cols=2)
+dev.off()
+
+# #outlier check
+# summary(cu$LfCountH)
+# cu[cu$LfCountH==84,]
+# cu[cu$PopID=="RU008",]
+# 
+# summary(n$LfCountH)
+# n[n$LfCountH==72,]
+# 
+# summary(co$LfCountH)
+# co[co$LfCountH==64,]
 
 ######plot LH traits#####
 #base graphics
@@ -82,22 +116,26 @@ grdatB <- merge(grdatB, n, all=TRUE)
 grBatH <- NULL
 grBatH
 grBatH2 <- ddply(grdatB, .(Trt, Origin), summarize, totcount = length(BoltedatH))
+grBatH2$xmax <- cumsum(grBatH2$totcount)
+grBatH2$xmin <- grBatH2$xmax-grBatH2$totcount
 grBatH3 <- ddply(grdatB, .(Trt, Origin, BoltedatH), summarize, count = length(BoltedatH))
 grBatH <- merge(grBatH2,grBatH3, all.y=TRUE)
 grBatH$Trt <- factor(grBatH$Trt, c("cont","nut def","cut"))
-grBatH$xmin <- 0
-grBatH$xmax <- 96
-grBatH[1:2,]$xmax<- 16
-grBatH[3:4,]$xmin<- 16
-grBatH[3:4,]$xmax<- 32
-grBatH[5:6,]$xmin<- 32
-grBatH[5:6,]$xmax<- 48
-grBatH[7:8,]$xmin<- 48
-grBatH[7:8,]$xmax<- 64
-grBatH[9,]$xmin<- 64
-grBatH[9,]$xmax<- 80
-grBatH[10:11,]$xmin<- 80
-# grBatH[10:11,]$xmax<- 50
+# grBatH$xmin <- 0
+# grBatH$xmax <- 855
+# grBatH[1:2,]$xmax<- 125
+# grBatH[3:4,]$xmin<- 125
+# grBatH[3:4,]$xmax<- 386
+# 
+# grBatH[8:9,]$xmin<- 386
+# grBatH[8:9,]$xmax<- 448
+# grBatH[10:11,]$xmin<- 448
+# grBatH[10:11,]$xmax<- 594
+# 
+# grBatH[5,]$xmin<- 594
+# grBatH[5,]$xmax<- 675
+# grBatH[6:7,]$xmin<- 675
+# # grBatH[6:7,]$xmax<- 48
 
 grBatH$Treatment <- paste(grBatH$Trt, grBatH$Origin, grBatH$BoltedatH)
 
@@ -128,29 +166,120 @@ levels(grBatH1$BoltedatH)[levels(grBatH1$BoltedatH)=="n"] <- "Not Bolted"
 levels(grBatH1$BoltedatH)[levels(grBatH1$BoltedatH)=="y"] <- "Bolted"
 # origins <- c("Invasive", "Native","Invasive", "Native","Invasive", "Native")
 
-pdf("ST bolted mosaic.pdf", useDingbats=FALSE)
-p1 <- ggplot(grBatH1, aes(ymin = ymin, ymax = ymax, xmin=xmin, xmax=xmax, fill=Treatment))+ geom_rect(colour = I("grey"), size=1.5)+
-  scale_x_continuous(breaks=seq(16,80,32),labels=c("Control", "Herbivory", "Nutrient"), name="Stress Treatments")+
-  scale_y_continuous(name="Percent Bolted at Harvest")
- 
-p1 + annotate(geom="text", x=grBatH1$xmin+8, y=105, label=grBatH1$Origin, size=3) +
-  annotate(geom="text", x=grBatH1$xmin+8, y=grBatH1$ymin+2, label=grBatH1$BoltedatH, size=2)+ 
+######colored plot######
+# pdf("ST bolted mosaic.pdf", useDingbats=FALSE)
+# p1 <- ggplot(grBatH1, aes(ymin = ymin, ymax = ymax, xmin=xmin, xmax=xmax, fill=Treatment))+ geom_rect(colour = I("grey"), size=1.5)+
+#   scale_x_continuous(breaks=c(125,448,675),labels=c("Control", "Herbivory", "Nutrient"), name="Stress Treatments")+
+#   scale_y_continuous(name="Percent Bolted at Harvest")
+# p1
+# # p1 + annotate(geom="text", x=grBatH1$xmin+8, y=105, label=grBatH1$Origin, size=3) +
+# #   annotate(geom="text", x=grBatH1$xmin+8, y=grBatH1$ymin+2, label=grBatH1$BoltedatH, size=2)+ 
+# #   theme(legend.position="none", axis.title.x = element_text(size=15, face="bold", vjust=-0.4), 
+# #         axis.title.y = element_text(size=15, face="bold"),axis.text.x = element_text(size=15 ))+ 
+# #   annotate('point',x = 16, y = 101, pch=8, color="red",parse=T, size=3)+annotate('point',x = 18, y = 101, pch=8, color="red",parse=T, size=3)+annotate('point',x = 14, y = 101, pch=8, color="red",parse=T, size=3)+
+# #   annotate('point',x = 48, y = 101, pch=8, color="red",parse=T,size=3)+annotate('point',x = 46, y = 101, pch=8, color="red",parse=T,size=3)+annotate('point',x = 50, y = 101, pch=8, color="red",parse=T,size=3)
+# dev.off()
+
+# col=as.numeric(grBatH1 $Trt) + 3* (as.numeric(grBatH1 $Origin)-1)
+# # alph= 1/as.numeric(grBatH1$BoltedatH)
+# #colorset = c("red","darkred", "green","darkgreen", "blue",   "darkblue")
+# colorset = c("green", "blue", "darkred","darkgreen","darkblue","red")
+# mycolors = colorset[col]
+# grBatH1$colval = mycolors
+# cscale = scale_fill_manual(values=colorset)
+
+# Or def colors, rather than give alpha, gives factor with 12 levels (one is unused)
+col= with( grBatH1, interaction(Origin, Trt, BoltedatH))
+# define a color set with a set value for each of the levels
+# goes across the top then across the bottom...
+# blue is unused...
+# colorset = c("darkorange",  "darkred",  "darkcyan", "purple",  "darkgreen",
+#              "orange", "red", "cyan","darkorchid1", "blue", "green", "darkblue")
+colors()[c(552,555,503,506,26,30,563,566,96,99,368,371, 48,51, 494, 497, 468, 471, 590, 618)]
+# colorset <- c("red3","orangered3", "darkorchid4","hotpink4","blue4","royalblue4","red","orangered","hotpink1","blue","royalblue1","darkorchid1")
+colorset <- c("chartreuse4","olivedrab4", "darkorchid4","mediumpurple4","steelblue3","royalblue4","chartreuse1","olivedrab1","mediumpurple1","skyblue1","royalblue1","darkorchid1")
+#for order here, going col1 top, bottom, col 2 top, bottom, etc
+#c(2,4,10,12,6,8,1,3,5,7,9) 9 is not used
+# create a special ggplot color scale with your colorset
+cscale = scale_fill_manual(values=colorset)
+# in the ggplot() aes, you will specify fill=factor(col) to get out the right values...
+
+pdf("ST bolted mosaic_color.pdf", useDingbats=FALSE)
+p1 <- ggplot(grBatH1, aes(ymin = ymin, ymax = ymax, xmin=xmin, xmax=xmax, fill=factor(col)))+
+  geom_rect(colour = I("grey"), size=1.5)+
+  scale_x_continuous(breaks=c(125,448,675),labels=c("Control", "Herbivory", "Nutrient"), name="Stress Treatments") +
+  scale_y_continuous(name="Percent Bolted at Harvest") + cscale
+
+# annotate 
+p1 + theme(panel.grid.minor.y=element_blank(), panel.grid.major.y=element_blank())+
+  annotate(geom="text", x=(grBatH1$xmax-grBatH1$xmin)/2 + grBatH1$xmin, y=105, label=grBatH1$Origin, size=5) +
+  annotate(geom="text", x=(grBatH1$xmax-grBatH1$xmin)/2 + grBatH1$xmin, y=grBatH1$ymin+2, label=grBatH1$BoltedatH, size=4)+ 
   theme(legend.position="none", axis.title.x = element_text(size=15, face="bold", vjust=-0.4), 
         axis.title.y = element_text(size=15, face="bold"),axis.text.x = element_text(size=15 ))+ 
-  annotate('point',x = 16, y = 101, pch=8, color="red",parse=T, size=3)+annotate('point',x = 18, y = 101, pch=8, color="red",parse=T, size=3)+annotate('point',x = 14, y = 101, pch=8, color="red",parse=T, size=3)+
-  annotate('point',x = 48, y = 101, pch=8, color="red",parse=T,size=3)+annotate('point',x = 46, y = 101, pch=8, color="red",parse=T,size=3)+annotate('point',x = 50, y = 101, pch=8, color="red",parse=T,size=3)
+  annotate('point',x = 125, y = 102, pch=8, color="red",parse=T, size=3)+annotate('point',x = 140, y = 102, pch=8, color="red",parse=T, size=3)+annotate('point',x = 110, y = 102, pch=8, color="red",parse=T, size=3)+
+  annotate('point',x = 448, y = 102, pch=8, color="red",parse=T,size=3)+annotate('point',x = 463, y = 102, pch=8, color="red",parse=T,size=3)+annotate('point',x = 433, y = 102, pch=8, color="red",parse=T,size=3)
 dev.off()
 
-###works to here, change colors or shading???
-grBatH1$chrom <- 100
-grBatH1[grBatH1$Boltedat=="y",]$chrom <- 50
-grBatH1$color <- c(30, 35,45,50,90, 105,110,60,65,75,80)
-# grBatH1 <- rbind(grBatH1, c("nut def", "inv",81, "y",0, 64, 80, "nut def inv y", 100.00000,  100.00000, 10,"#56B4E9"))
-grBatH1$Treatment <- as.factor(grBatH1$Treatment)
-# grBatH1$chrom <- as.integer(grBatH1$chrom)
-# grBatH1$color <- as.factor(grBatH1$color)
-grBatH1
-str(grBatH1)
+####may need to paint in textures or something...
+
+#####black and white plot#####
+col= with( grBatH1, interaction(Origin, Trt, BoltedatH))
+
+colors()[c(312,336,350,366,1,176)]
+colorset <- c("grey51","grey84", "grey51","grey84", "grey51","grey84","white","white","white","white","white","white")
+cscale = scale_fill_manual(values=colorset)
+
+
+pdf("ST bolted mosaic_bw.pdf", useDingbats=FALSE)
+p1 <- ggplot(grBatH1, aes(ymin = ymin, ymax = ymax, xmin=xmin, xmax=xmax, fill=factor(col)))+
+  geom_rect(colour = I("gray23"), size=1.5)+
+  scale_x_continuous(breaks=c(125,448,675),labels=c("Control", "Herbivory", "Nutrient"), name="Stress Treatments") +
+  scale_y_continuous(name="Percent Bolted at Harvest") + theme_bw()+cscale
+# annotate 
+p1 + theme(panel.grid.minor.y=element_blank(), panel.grid.major.y=element_blank())+
+  annotate(geom="text", x=(grBatH1$xmax-grBatH1$xmin)/2 + grBatH1$xmin, y=105, label=grBatH1$Origin, size=5) +
+  annotate(geom="text", x=(grBatH1$xmax-grBatH1$xmin)/2 + grBatH1$xmin, y=grBatH1$ymin+2, label=grBatH1$BoltedatH, size=4)+ 
+  theme(legend.position="none", axis.title.x = element_text(size=15, face="bold", vjust=-0.4), 
+        axis.title.y = element_text(size=15, face="bold"),axis.text.x = element_text(size=15 ))+ 
+  annotate('point',x = 125, y = 102, pch=8, color="black",parse=T, size=3)+annotate('point',x = 140, y = 102, pch=8, color="black",parse=T, size=3)+annotate('point',x = 110, y = 102, pch=8, color="black",parse=T, size=3)+
+  annotate('point',x = 448, y = 102, pch=8, color="black",parse=T,size=3)+annotate('point',x = 463, y = 102, pch=8, color="black",parse=T,size=3)+annotate('point',x = 433, y = 102, pch=8, color="black",parse=T,size=3)
+dev.off()
+
+
+
+# #orfill=factor(col)
+# #plotting 1,3,5 then 2,4,6 because of the levels
+# 
+# # Or def colors, rather than give alpha, gives factor with 12 levels (one is unused)
+# col= with( grBatH1, interaction(Origin, Trt, BoltedatH))
+# # define a color set with a set value for each of the levels
+# # goes across the top then across the bottom...
+# # blue is unused...
+# # colorset = c("darkorange",  "darkred",  "darkcyan", "purple",  "darkgreen",
+# #              "orange", "red", "cyan","darkorchid1", "blue", "green", "darkblue")
+# colors()[c(552,555,503,506,26,30,563,566,96,99,368,371, 48,51, 494, 497, 468, 471)]
+# # colorset <- c("red3","orangered3", "darkorchid4","hotpink4","blue4","royalblue4","red","orangered","hotpink1","blue","royalblue1","darkorchid1")
+# colorset <- c("chartreuse4","olivedrab4", "darkorchid4","mediumpurple4","blue4","royalblue4","chartreuse1","olivedrab1","mediumpurple1","blue","royalblue1","darkorchid1")
+# 
+# # create a special ggplot color scale with your colorset
+# cscale = scale_fill_manual(values=colorset)
+# # in the ggplot() aes, you will specify fill=factor(col) to get out the right values...
+# p1 <- ggplot(grBatH1, aes(ymin = ymin, ymax = ymax, xmin=xmin, xmax=xmax, fill=factor(col)))+
+#   geom_rect(colour = I("grey"), size=1.5)+
+#   scale_x_continuous(breaks=c(125,448,675),labels=c("Control", "Herbivory", "Nutrient"), name="Stress Treatments") +
+#   scale_y_continuous(name="Percent Bolted at Harvest") + cscale
+# p1
+# 
+# #chroma?
+# grBatH1$chrom <- 100
+# grBatH1[grBatH1$Boltedat=="y",]$chrom <- 50
+# grBatH1$color <- c(30, 35,45,50,90, 105,110,60,65,75,80)
+# # grBatH1 <- rbind(grBatH1, c("nut def", "inv",81, "y",0, 64, 80, "nut def inv y", 100.00000,  100.00000, 10,"#56B4E9"))
+# grBatH1$Treatment <- as.factor(grBatH1$Treatment)
+# # grBatH1$chrom <- as.integer(grBatH1$chrom)
+# # grBatH1$color <- as.factor(grBatH1$color)
+# grBatH1
+# str(grBatH1)
 
 #  
 #
