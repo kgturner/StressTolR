@@ -115,6 +115,7 @@ grdatB <- merge(grdatB, n, all=TRUE)
 
 grBatH <- NULL
 grBatH
+
 grBatH2 <- ddply(grdatB, .(Trt, Origin), summarize, totcount = length(BoltedatH))
 grBatH2$xmax <- cumsum(grBatH2$totcount)
 grBatH2$xmin <- grBatH2$xmax-grBatH2$totcount
