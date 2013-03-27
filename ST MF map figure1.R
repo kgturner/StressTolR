@@ -52,9 +52,13 @@ legend("topright", c("Germination trial", "Stress tolerance","Maternal effects")
 library(rworldmap)
 library(rworldxtra)
 newmap <- getMap(resolution = "coarse")
-plot(newmap,xlim = c(-10, 70), ylim = c(80, 95),asp = 1)
-# plot(newmap,xlim = c(-20, 59), ylim = c(35, 71),asp = 0.5)
+plot(newmap,xlim=c(-10,60), ylim=c(30,65),asp = 1)
+points(popNat$Longitude, popNat$Latitude, pch=popNat$pch, col = "red", cex=1)
+legend("topleft", c("Germination trial", "Stress tolerance","Maternal effects"), pch=c(1,19,15), col="red", title="C. diffusa Native Range")
+
 # 
+# plot(newmap,xlim = c(-10, 70), ylim = c(80, 95),asp = 1)
+
 # library(ggmap)
 # library(mapproj)
 # map <- get_map(location = 'Europe', zoom = 4)
@@ -105,7 +109,7 @@ points(popNat$Longitude, popNat$Latitude, pch=popNat$pch, col = "red", cex=1)
 
 
 =======
-legend("topright", c("Germination trial", "Stress tolerance","Maternal effects"), pch=c(1,19,15), col="red", title="C. diffusa Native Range")
+
 >>>>>>> 21b347a8c79c73503bbd012ee4402b5494a82784
 #########################
 #vectors/df for maps

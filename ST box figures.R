@@ -233,7 +233,7 @@ cscale = scale_fill_manual(values=colorset)
 
 pdf("ST bolted mosaic_bw.pdf", useDingbats=FALSE)
 p1 <- ggplot(grBatH1, aes(ymin = ymin, ymax = ymax, xmin=xmin, xmax=xmax, fill=factor(col)))+
-  geom_rect(colour = I("gray23"), size=1.5)+
+  geom_rect(colour = I("grey"), size=1.5)+
   scale_x_continuous(breaks=c(125,448,675),labels=c("Control", "Herbivory", "Nutrient"), name="Stress Treatments") +
   scale_y_continuous(name="Percent Bolted at Harvest") + theme_bw()+cscale
 # annotate 
