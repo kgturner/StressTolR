@@ -91,6 +91,7 @@ head(m1)
 # m1<-cbind(m1,lxw=m1$LfLgth1*m1$LfWdth1, lxw.log=log(m1$LfLgth1*m1$LfWdth1))
 m1lxw <- CGtrait.LR.int("lxw", m1)
 m1lf <- CGtrait.LR.int("LfCount1", m1, family=poisson)#poisson distribution
+m1lfmodels <- CGtrait.models.int("LfCount1", m1, family=poisson)
 
 ###m1, lxw, mom sig, do by hand###
 modeldata<-m1[!is.na(m1$lxw),]
