@@ -126,18 +126,20 @@ model2raw<-lmer(LfCount1 ~ Origin *Latitude+(1|PopID), family=poisson,data=model
 model3raw<-lmer(LfCount1 ~ Origin *Latitude+(1|blank), family=poisson,data=modeldata) # Test population effect
 anova(model2raw,model1raw) # mom not sig
 anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
+dchisq(X,df) #x is chi sq from table, df is df from table (0) + 1
+dchisq(160.9,1)
 
 modelI <- lmer(LfCount1  ~ Origin + Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
 anova(modelI,model1raw)
 
 modelL<-lmer(LfCount1 ~ Origin +(1|PopID/Mom), family=poisson,data=modeldata)
-anova(modelL, model1raw)
+anova(modelL, modelI)
 
 modelOraw<-lmer(LfCount1 ~ Latitude+(1|PopID/Mom), family=poisson,data=modeldata)
 anova(modelOraw,model1raw) #test for significance of origin - origin NOT sig....!
 model1raw
-int<-0.29109#inv mean
-B<- 1.51023#Originnat estimate from model summary
+int<-0.29109 + 0.04405- (0.50455+0.01127)*1.96 #inv mean
+B<- 1.51023 -0.03324 #Originnat estimate from model summary
 pI<-exp(int)
 pN<-exp(int+B)
 pI
@@ -191,16 +193,16 @@ model2raw<-lmer(LfCountH ~Origin *Latitude +(1|PopID), family=poisson,data=model
 model3raw<-lmer(LfCountH ~ Origin *Latitude +(1|blank), family=poisson,data=modeldata) # Test population effect
 anova(model2raw,model1raw) # mom not sig
 anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
-
+dchisq(60.911,1)
 modelI <-lmer(LfCountH ~ Origin +Latitude +(1|PopID/Mom), family=poisson,data=modeldata) 
 anova(modelI,model1raw)
-# 
-# modelL<-lmer(LfCountH ~ Origin +(1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelL, model1raw)
-# 
-# modelOraw<-lmer(LfCountH ~Latitude+(1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelOraw,model1raw) #test for significance of origin - origin NOT sig....!
 
+modelL<-lmer(LfCountH ~ Origin +(1|PopID/Mom), family=poisson,data=modeldata)
+anova(modelL, modelI)
+
+modelOraw<-lmer(LfCountH ~Latitude+(1|PopID/Mom), family=poisson,data=modeldata)
+anova(modelOraw,modelI) #test for significance of origin - origin NOT sig....!
+anova()
 ###control, boltdate, mom sig, do by hand###
 #only bolters
 modeldata<-co[!is.na(co$BoltDate),]
@@ -235,15 +237,15 @@ model2<-lmer(bolt.bin ~ Origin * Latitude +(1|PopID), family=binomial,data=model
 model3<-lmer(bolt.bin ~ Origin * Latitude +(1|blank), family=binomial,data=modeldata) # Test population effect
 anova(model2,model1) # mom sig
 anova(model3,model2) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
-
+dchisq(0.5715,1)
 modelI<-lmer(bolt.bin ~ Origin + Latitude +(1|PopID/Mom), family=binomial,data=modeldata)
 anova(modelI, model1)
 
 modelL<-lmer(bolt.bin ~ Origin + (1|PopID/Mom), family=binomial,data=modeldata)
-anova(modelL, model1) #are lat and origin different???? sig so yes?
+anova(modelL, modelI) #are lat and origin different???? sig so yes?
 
 modelO<-lmer(bolt.bin ~ Latitude + (1|PopID/Mom), family=binomial,data=modeldata)
-anova(modelO,model1) #test for significance of origin??? origin sig!
+anova(modelO,modelI) #test for significance of origin??? origin sig!
 model1
 #mean estimates
 int<- -25.6701 #inv mean
@@ -373,8 +375,8 @@ model1<-lmer(bolt.bin ~ Origin *Latitude +(1|PopID/Mom), family=binomial,data=mo
 model2<-lmer(bolt.bin ~ Origin *Latitude +(1|PopID), family=binomial,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
 model3<-lmer(bolt.bin ~ Origin *Latitude +(1|blank), family=binomial,data=modeldata) # Test population effect
 anova(model2,model1) # mom sig
-anova(model2,model3) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
-
+anova(model3,model2) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
+dchisq(0,1)
 modelI <- lmer(bolt.bin ~ Origin +Latitude +(1|blank), family=binomial,data=modeldata)
 anova(modelI, model3)
 
