@@ -393,6 +393,15 @@ modeldata$blank<-as.factor(modeldata$blank)
 modeldata$Mom<-as.factor(modeldata$Mom)
 
 model1<-lmer(bolt.bin ~ Origin *Latitude +(1|PopID/Mom), family=binomial,data=modeldata)
+
+prob <- as.data.frame(modeldata)
+with(prob, bolt.bin[order(Latitude)]) 
+model4<-lmer(bolt.bin ~ Origin+Latitude +(1|PopID/Mom), family=binomial,data=modeldata)
+model5 <- lmer(bolt.bin~ Origin+Latitude +(1|PopID), family=binomial,data=modeldata)
+anova(model5, model4)
+model6 <- lmer(bolt.bin~ Origin+Latitude +(1|blank), family=binomial,data=modeldata)
+anova(model6, model5)
+
 model2<-lmer(bolt.bin ~ Origin *Latitude +(1|PopID), family=binomial,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
 model3<-lmer(bolt.bin ~ Origin *Latitude +(1|blank), family=binomial,data=modeldata) # Test population effect
 anova(model2,model1) # mom sig
