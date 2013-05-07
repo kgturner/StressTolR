@@ -330,7 +330,7 @@ anova(modelO,modelL)
 cu<-read.table("STCutsubset.txt", header=T, sep="\t", quote='"', row.names=1) #cutsubset
 head(cu)
 cuLR <- lapply(names(cu)[c(13:14, 42)],function(n) CGtrait.LR.int(n,cu)) #crow, root, root.log, all gaussian
-
+dchisq(13.036,1)
 #non-gaussian?
 # cu<- cbind(cu, bolt.bin=as.numeric(cu$BoltedatH)-1)
 # write.table(cu, file="STCutsubset.txt", sep="\t", quote=F)
@@ -342,6 +342,27 @@ cuP <- lapply(names(cu)[c(10,27)],function(n) CGtrait.LR.int(n,cu, family=poisso
 # qqnorm(resid(cumodels$model2), main="Q-Q plot for residuals")
 # qqline(resid(cumodels$model2))
 # shapiro.test(resid(cumodels$model2))
+
+#####cut, root.log, harvest###
+modeldata<-cu[!is.na(cu$RootH.log),]
+modeldata$blank<-1
+modeldata$blank<-as.factor(modeldata$blank)
+modeldata$Mom<-as.factor(modeldata$Mom)
+
+model1raw<-lmer(RootH.log ~ Origin * Latitude + (1|PopID/Mom), family=gaussian,data=modeldata)
+model2raw<-lmer(RootH.log ~ Origin * Latitude + (1|PopID), family=gaussian,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
+model3raw<-lmer(RootH.log ~ Origin * Latitude + (1|blank), family=gaussian,data=modeldata) # Test population effect
+anova(model2raw,model1raw) # mom not sig
+anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
+dchisq(13.036,1)
+modelI <- lmer(RootH.log ~ Origin + Latitude + (1|PopID), family=gaussian,data=modeldata)
+anova(modelI,model1raw)
+
+modelO <- lmer(RootH.log ~ Origin +(1|PopID), family=gaussian,data=modeldata)
+anova(modelO,modelI) 
+
+modelL <- lmer(RootH.log ~ Latitude +(1|PopID), family=gaussian,data=modeldata)
+anova(modelL,modelI) 
 
 ####cut, lf count, harvest, mom is sig, do by hand###
 modeldata<-cu[!is.na(cu$LfCountH),]
@@ -376,6 +397,7 @@ model2<-lmer(bolt.bin ~ Origin *Latitude +(1|PopID), family=binomial,data=modeld
 model3<-lmer(bolt.bin ~ Origin *Latitude +(1|blank), family=binomial,data=modeldata) # Test population effect
 anova(model2,model1) # mom sig
 anova(model3,model2) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
+print(anova(model3,model2), digits=23)
 dchisq(0,1)
 modelI <- lmer(bolt.bin ~ Origin +Latitude +(1|blank), family=binomial,data=modeldata)
 anova(modelI, model3)
@@ -384,6 +406,9 @@ modelL <- lmer(bolt.bin ~ Origin +(1|blank), family=binomial,data=modeldata)
 anova(modelL, model3)
 anova(modelI, modelL)
 modelL
+
+(lambda <- (-2)*(-199.54 - (-191.60)))
+dchisq(lambda,1)
 
 modelO<-lmer(bolt.bin ~ Latitude+(1|blank), family=binomial,data=modeldata)
 anova(modelO,model3) #test for significance of origin - origin sig!
