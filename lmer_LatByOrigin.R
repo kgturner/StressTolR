@@ -126,8 +126,9 @@ model2raw<-lmer(LfCount1 ~ Origin *Latitude+(1|PopID), family=poisson,data=model
 model3raw<-lmer(LfCount1 ~ Origin *Latitude+(1|blank), family=poisson,data=modeldata) # Test population effect
 anova(model2raw,model1raw) # mom not sig
 anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
-dchisq(X,df) #x is chi sq from table, df is df from table (0) + 1
-dchisq(160.9,1)
+# dchisq(X,df) #x is chi sq from table, df is df from table (0) + 1
+(lambda <- (-2)*(-514.56 - (-434.10)))
+1-pchisq(160.92,1)
 
 modelI <- lmer(LfCount1  ~ Origin + Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
 anova(modelI,model1raw)
@@ -193,7 +194,7 @@ model2raw<-lmer(LfCountH ~Origin *Latitude +(1|PopID), family=poisson,data=model
 model3raw<-lmer(LfCountH ~ Origin *Latitude +(1|blank), family=poisson,data=modeldata) # Test population effect
 anova(model2raw,model1raw) # mom not sig
 anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
-dchisq(60.911,1)
+1-pchisq(60.911,1)
 modelI <-lmer(LfCountH ~ Origin +Latitude +(1|PopID/Mom), family=poisson,data=modeldata) 
 anova(modelI,model1raw)
 
@@ -237,7 +238,7 @@ model2<-lmer(bolt.bin ~ Origin * Latitude +(1|PopID), family=binomial,data=model
 model3<-lmer(bolt.bin ~ Origin * Latitude +(1|blank), family=binomial,data=modeldata) # Test population effect
 anova(model2,model1) # mom sig
 anova(model3,model2) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
-dchisq(0.5715,1)
+1-pchisq(0.5715,1)
 modelI<-lmer(bolt.bin ~ Origin + Latitude +(1|PopID/Mom), family=binomial,data=modeldata)
 anova(modelI, model1)
 
@@ -352,9 +353,11 @@ modeldata$Mom<-as.factor(modeldata$Mom)
 model1raw<-lmer(RootH.log ~ Origin * Latitude + (1|PopID/Mom), family=gaussian,data=modeldata)
 model2raw<-lmer(RootH.log ~ Origin * Latitude + (1|PopID), family=gaussian,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
 model3raw<-lmer(RootH.log ~ Origin * Latitude + (1|blank), family=gaussian,data=modeldata) # Test population effect
-anova(model2raw,model1raw) # mom not sig
+print(anova(model2raw,model1raw), digits=22) # mom not sig
+(lambda <- (-2)*(-191.6041864411309347815 - (-191.6041784571340258481)))
+1-pchisq(1.596799e-05,1)
 anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
-dchisq(13.036,1)
+1-pchisq(13.036,1)
 modelI <- lmer(RootH.log ~ Origin + Latitude + (1|PopID), family=gaussian,data=modeldata)
 anova(modelI,model1raw)
 
@@ -394,8 +397,8 @@ modeldata$Mom<-as.factor(modeldata$Mom)
 
 model1<-lmer(bolt.bin ~ Origin *Latitude +(1|PopID/Mom), family=binomial,data=modeldata)
 
-prob <- as.data.frame(modeldata)
-with(prob, bolt.bin[order(Latitude)]) 
+
+# with(modeldata, bolt.bin[order(Latitude)]) 
 model4<-lmer(bolt.bin ~ Origin+Latitude +(1|PopID/Mom), family=binomial,data=modeldata)
 model5 <- lmer(bolt.bin~ Origin+Latitude +(1|PopID), family=binomial,data=modeldata)
 anova(model5, model4)
@@ -406,45 +409,58 @@ model2<-lmer(bolt.bin ~ Origin *Latitude +(1|PopID), family=binomial,data=modeld
 model3<-lmer(bolt.bin ~ Origin *Latitude +(1|blank), family=binomial,data=modeldata) # Test population effect
 anova(model2,model1) # mom sig
 anova(model3,model2) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
-print(anova(model3,model2), digits=23)
-dchisq(0,1)
-modelI <- lmer(bolt.bin ~ Origin +Latitude +(1|blank), family=binomial,data=modeldata)
-anova(modelI, model3)
+print(anova(model3,model2), digits=22)
+(lambda <- (-2)*(-92.33837575460984226083 - (-92.33837577481315861405)))
+1-pchisq(-4.040663e-08,1)
 
-modelL <- lmer(bolt.bin ~ Origin +(1|blank), family=binomial,data=modeldata)
-anova(modelL, model3)
-anova(modelI, modelL)
-modelL
+#for models with no significant or nearly sig (basically p>0.2) random effects, use glm instead
+# modelI <- lmer(bolt.bin ~ Origin +Latitude +(1|blank), family=binomial,data=modeldata)
+# anova(modelI, model3)
+# modelL <- lmer(bolt.bin ~ Origin +(1|blank), family=binomial,data=modeldata)
+# anova(modelL, model3)
+# anova(modelI, modelL)
+# modelL
+# (lambda <- (-2)*(-199.54 - (-191.60)))
+# 1-pchisq(lambda,1)
+# modelO<-lmer(bolt.bin ~ Latitude+(1|blank), family=binomial,data=modeldata)
+# anova(modelO,model3) #test for significance of origin - origin sig!
+# anova(modelO, modelI)
+# modelO2<- lmer(bolt.bin ~ (1|blank), family=binomial,data=modeldata)
+# anova(modelL, modelO2)
+# modelP <- lmer(bolt.bin ~ Origin + (1|PopID), family = binomial, data=modeldata)
+# anova(modelP, modelL)
+# model3
 
-(lambda <- (-2)*(-199.54 - (-191.60)))
-dchisq(lambda,1)
+#calculating means 
+# int<--172.961 #inv mean
+# B<-173.314 #Originnat estimate from model summary
+# # Native
+# pN<-exp(int+B)/(exp(int+B)+1)
+# # Introduced (B=0)
+# pI<-exp(int)/(exp(int)+1)
+# 
+# pI # 6.5% 
+# pN # 27%
+# #check by looking at percentages
+# summary(cu[cu$Origin=="nat",]) #146 rows, 39 boltedatH = 27%
+# summary(cu[cu$Origin=="inv",]) #55 rows, 8 boltedatH = 6.4%
 
-modelO<-lmer(bolt.bin ~ Latitude+(1|blank), family=binomial,data=modeldata)
-anova(modelO,model3) #test for significance of origin - origin sig!
-anova(modelO, modelI)
-
-modelO2<- lmer(bolt.bin ~ (1|blank), family=binomial,data=modeldata)
-anova(modelL, modelO2)
-
-modelP <- lmer(bolt.bin ~ Origin + (1|PopID), family = binomial, data=modeldata)
-anova(modelP, modelL)
-
-model3
-
-int<--172.961 #inv mean
-B<-173.314 #Originnat estimate from model summary
-# Native
-pN<-exp(int+B)/(exp(int+B)+1)
-# Introduced (B=0)
-pI<-exp(int)/(exp(int)+1)
-
-pI # 6.5% 
-pN # 27%
-#check by looking at percentages
-summary(cu[cu$Origin=="nat",]) #146 rows, 39 boltedatH = 27%
-summary(cu[cu$Origin=="inv",]) #55 rows, 8 boltedatH = 6.4%
 #also check glm
-glm(bolt.bin ~ Origin, family=binomial,data=modeldata)
+modelg <- glm(bolt.bin ~ Origin*Latitude, family=binomial,data=modeldata)
+modelg1 <- glm(bolt.bin ~ Origin+Latitude, family=binomial,data=modeldata)
+modelg2 <- glm(bolt.bin ~ Latitude, family=binomial,data=modeldata)
+modelg3 <- glm(bolt.bin ~ Origin, family=binomial,data=modeldata)
+# lrtest(modelg1, modelg) from library(epicalc)
+anova(modelg1, modelg) #'Deviance' is chisq value
+1-pchisq(14.456,1)
+anova(modelg3,modelg1)
+1-pchisq(0.0005405,1)
+anova(modelg2,modelg1)
+1-pchisq(12.855,1)
+
+# modelg4 <- glm(bolt.bin ~ Latitude*Origin, family=binomial,data=modeldata)
+# modelg5 <- glm(bolt.bin ~ Latitude+Origin, family=binomial,data=modeldata)
+# anova(modelg5, modelg4)
 
 ###cut, harvest, bolt date, mom is sig, do by hand###
 #given that it's bolted....
