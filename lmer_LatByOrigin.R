@@ -44,7 +44,7 @@ almodels <- CGtrait.models.int("CrownDiam.mmA",al)
 almodels
 
 ###allo shoot, mom is sig, do by hand
-modeldata<-al[!is.na(al$ShootA.log),]
+modeldata<-al[!is.na(al$ShootMass.gA),]
 modeldata$blank<-1
 modeldata$blank<-as.factor(modeldata$blank)
 modeldata$Mom<-as.factor(modeldata$Mom)
@@ -54,15 +54,16 @@ model2raw<-lmer(ShootMass.gA  ~ Origin* Latitude + (1|PopID), family=gaussian,da
 model3raw<-lmer(ShootMass.gA  ~ Origin* Latitude + (1|blank), family=gaussian,data=modeldata) # Test population effect
 anova(model2raw,model1raw) # mom is sig!
 anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
+1-pchisq(13.097,1)
 
 modelI <- lmer(ShootMass.gA  ~ Origin + Latitude + (1|PopID/Mom), family=gaussian,data=modeldata)
 anova(modelI,model1raw)
 
-# modelL<-lmer(ShootMass.gA  ~ Origin + (1|PopID/Mom), family=gaussian,data=modeldata)
-# anova(modelL, model1raw)
-# 
-# modelOraw<-lmer(ShootMass.gA ~ Latitude +(1|PopID/Mom), family=gaussian,data=modeldata)
-# anova(modelOraw,model1raw) #test for significance of origin - origin not sig
+modelL<-lmer(ShootMass.gA  ~ Origin + (1|PopID/Mom), family=gaussian,data=modeldata)
+anova(modelL, modelI)
+
+modelOraw<-lmer(ShootMass.gA ~ Latitude +(1|PopID/Mom), family=gaussian,data=modeldata)
+anova(modelOraw,modelI) #test for significance of origin - origin not sig
 
 ###allo, root mass###
 modeldata<-al[!is.na(al$RootA.log),]
@@ -75,15 +76,42 @@ model2raw<-lmer(RootA.log  ~ Origin * Latitude+ (1|PopID), family=gaussian,data=
 model3raw<-lmer(RootA.log  ~ Origin * Latitude+ (1|blank), family=gaussian,data=modeldata) # Test population effect
 anova(model2raw,model1raw) # mom is sig!
 anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
-
+1-pchisq(13.428,1)
 modelI <- lmer(RootA.log  ~ Origin + Latitude + (1|PopID/Mom), family=gaussian,data=modeldata)
 anova(modelI,model1raw)
 
-# modelL<-lmer(RootA.log  ~ Origin + (1|PopID/Mom), family=gaussian,data=modeldata)
-# anova(modelL, model1raw)
-# 
-# modelOraw<-lmer(RootA.log ~ Latitude + (1|PopID/Mom), family=gaussian,data=modeldata)
-# anova(modelOraw,model1raw) #test for significance of origin - origin not sig
+modelL<-lmer(RootA.log  ~ Origin + (1|PopID/Mom), family=gaussian,data=modeldata)
+anova(modelL, modelI)
+
+modelOraw<-lmer(RootA.log ~ Latitude + (1|PopID/Mom), family=gaussian,data=modeldata)
+anova(modelOraw,modelI) #test for significance of origin - origin not sig
+
+###allo, crown###
+modeldata<-al[!is.na(al$CrownDiam.mmA),]
+modeldata$blank<-1
+modeldata$blank<-as.factor(modeldata$blank)
+modeldata$Mom<-as.factor(modeldata$Mom)
+
+model1raw<-lmer(CrownDiam.mmA  ~ Origin * Latitude+(1|PopID/Mom), family=gaussian,data=modeldata)
+model2raw<-lmer(CrownDiam.mmA  ~ Origin * Latitude+ (1|PopID), family=gaussian,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
+model3raw<-lmer(CrownDiam.mmA  ~ Origin * Latitude+ (1|blank), family=gaussian,data=modeldata) # Test population effect
+anova(model2raw,model1raw) # mom is sig!
+anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
+1-pchisq(18.974,1)
+modelI <- lmer(CrownDiam.mmA  ~ Origin + Latitude + (1|PopID/Mom), family=gaussian,data=modeldata)
+anova(modelI,model1raw)
+
+modelL<-lmer(CrownDiam.mmA  ~ Origin + (1|PopID/Mom), family=gaussian,data=modeldata)
+anova(modelL, modelI)
+
+modelOraw<-lmer(CrownDiam.mmA ~ Latitude + (1|PopID/Mom), family=gaussian,data=modeldata)
+anova(modelOraw,modelI)
+
+
+modelI <- lmer(CrownDiam.mmA  ~ Origin + Latitude + (1|PopID), family=gaussian,data=modeldata)
+modelOraw<-lmer(CrownDiam.mmA ~ Latitude + (1|PopID), family=gaussian,data=modeldata)
+anova(modelOraw,modelI)
+
 
 #####m1, Origin * Lat#####
 m1<-read.table("STm1subset.txt", header=T, sep="\t", quote='"', row.names=1) #m1subset
@@ -94,6 +122,7 @@ m1lf <- CGtrait.LR.int("LfCount1", m1, family=poisson)#poisson distribution
 m1lfmodels <- CGtrait.models.int("LfCount1", m1, family=poisson)
 
 ###m1, lxw, mom sig, do by hand###
+m1$lxw <- m1$LfLgth1*m1$LfWdth1
 modeldata<-m1[!is.na(m1$lxw),]
 modeldata$blank<-1
 modeldata$blank<-as.factor(modeldata$blank)
@@ -104,16 +133,16 @@ model2<-lmer(lxw ~ Origin *Latitude+ (1|PopID), family=gaussian,data=modeldata) 
 model3<-lmer(lxw ~ Origin *Latitude+ (1|blank), family=gaussian,data=modeldata) # Test population effect
 anova(model2,model1) # mom is sig!
 anova(model3,model2) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
-
+1-pchisq(96.674,1)
 modelI <- lmer(lxw  ~ Origin + Latitude + (1|PopID/Mom), family=gaussian,data=modeldata)
 anova(modelI,model1)
 
-# modelL<-lmer(lxw ~ Origin +(1|PopID/Mom), family=gaussian,data=modeldata)
-# anova(modelL, model1)
-# 
-# modelO<-lmer(lxw ~ (1|PopID/Mom), family=gaussian,data=modeldata)
-# anova(modelO,modelL) #test for significance of origin - origin not sig....?
-# #mom and popID sig, but not Origin! for either log or raw data
+modelL<-lmer(lxw ~ Origin +(1|PopID/Mom), family=gaussian,data=modeldata)
+anova(modelL, modelI)
+
+modelO<-lmer(lxw ~ (1|PopID/Mom), family=gaussian,data=modeldata)
+anova(modelO,modelL) #test for significance of origin - origin not sig....?
+#mom and popID sig, but not Origin! for either log or raw data
 
 ####m1, control, lf count####
 modeldata<-m1[!is.na(m1$LfCount1),]
@@ -152,7 +181,7 @@ head(co)
 coLR <- lapply(names(co)[c(15:17,52:53)],function(n) CGtrait.LR.int(n,co)) #crow, shoot, root, RootH.log, lxw, all gaussian
 names(coLR) <- names(co)[c(15:17,52:53)]
 coLR #check out LRs of models. Model progression logical?
-
+1-pchisq(31.753,1)
 # co <- cbind(co, bolt.bin=as.numeric(co$BoltedatH)-1)
 # write.table(co, file="STControlsubset.txt", sep="\t", quote=F)
 coBatH <- CGtrait.LR.int("bolt.bin", co, family=binomial)
@@ -172,15 +201,66 @@ model2raw<-lmer(lxwH ~ Origin *Latitude +(1|PopID), family=gaussian,data=modelda
 model3raw<-lmer(lxwH ~ Origin *Latitude +(1|blank), family=gaussian,data=modeldata) # Test population effect
 anova(model2raw,model1raw) # mom not sig
 anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
-
+1-pchisq(3.8178,1)
 modelI <- lmer(lxwH ~ Origin +Latitude +(1|PopID/Mom), family=gaussian,data=modeldata)
 anova(modelI, model1raw)
 
 modelL<-lmer(lxwH ~ Origin +(1|PopID/Mom), family=gaussian,data=modeldata)
-anova(modelL, model1raw)
+anova(modelL, modelI)
 
 modelOraw<-lmer(lxwH ~ Latitude +(1|PopID/Mom), family=gaussian,data=modeldata)
-anova(modelOraw,modelL) #test for significance of origin - origin NOT sig....!
+anova(modelOraw,modelI) #test for significance of origin - origin NOT sig....!
+
+##control, crown
+modeldata<-co[!is.na(co$CrownDiam.mm),]
+modeldata$blank<-1
+modeldata$blank<-as.factor(modeldata$blank)
+modeldata$Mom<-as.factor(modeldata$Mom)
+
+model1raw<-lmer(CrownDiam.mm ~ Origin *Latitude +(1|PopID/Mom), family=gaussian,data=modeldata)
+model2raw<-lmer(CrownDiam.mm ~ Origin *Latitude +(1|PopID), family=gaussian,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
+model3raw<-lmer(CrownDiam.mm ~ Origin *Latitude +(1|blank), family=gaussian,data=modeldata) # Test population effect
+anova(model2raw,model1raw) # mom not sig
+anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
+1-pchisq(3.8178,1)
+modelI <- lmer(CrownDiam.mm ~ Origin +Latitude +(1|PopID), family=gaussian,data=modeldata)
+print(anova(modelI, model2raw), digits=22)
+(lambda <- (-2)*(-681.7873280911552456018 - (-681.8026479629145342187)))
+1-pchisq(-0.03063974,1)
+modelL<-lmer(CrownDiam.mm ~ Origin +(1|PopID), family=gaussian,data=modeldata)
+anova(modelL, modelI)
+
+modelOraw<-lmer(CrownDiam.mm ~ Latitude +(1|PopID), family=gaussian,data=modeldata)
+print(anova(modelOraw,modelI), digits = 22)
+(lambda <- (-2)*(-681.7698599890596824480 - (-681.7873280911552456018)))
+1-pchisq(-0.0349362,1)
+
+##control, shoot
+modeldata<-co[!is.na(co$ShootMass.g),]
+modeldata$blank<-1
+modeldata$blank<-as.factor(modeldata$blank)
+modeldata$Mom<-as.factor(modeldata$Mom)
+
+modelI <- lmer(ShootMass.g ~ Origin +Latitude +(1|PopID), family=gaussian,data=modeldata)
+modelL<-lmer(ShootMass.g ~ Origin +(1|PopID), family=gaussian,data=modeldata)
+anova(modelL, modelI)
+
+modelOraw<-lmer(ShootMass.g ~ Latitude +(1|PopID), family=gaussian,data=modeldata)
+anova(modelOraw,modelI)
+
+##control, root
+modeldata<-co[!is.na(co$RootH.log),]
+modeldata$blank<-1
+modeldata$blank<-as.factor(modeldata$blank)
+modeldata$Mom<-as.factor(modeldata$Mom)
+
+modelI <- lmer(RootH.log ~ Origin +Latitude +(1|PopID), family=gaussian,data=modeldata)
+modelL<-lmer(RootH.log ~ Origin +(1|PopID), family=gaussian,data=modeldata)
+anova(modelL, modelI)
+
+modelOraw<-lmer(RootH.log ~ Latitude +(1|PopID), family=gaussian,data=modeldata)
+anova(modelOraw,modelI)
+ 
 
 ####control, lf count, mom sig so do by hand#####
 #poisson on raw data
@@ -216,7 +296,7 @@ model2<-lmer(BoltDate ~ Origin * Latitude +(1|PopID), family=poisson,data=modeld
 model3<-lmer(BoltDate ~ Origin * Latitude +(1|blank), family=poisson,data=modeldata) # Test population effect
 anova(model2,model1) # mom sig
 anova(model3,model2) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
-
+1-pchisq(154.74,1)
 modelI<-lmer(BoltDate ~ Origin + Latitude +(1|PopID/Mom), family=poisson,data=modeldata)
 anova(modelI, model1)
 
@@ -293,45 +373,95 @@ model2raw<-lmer(LfCountH ~ Origin * Latitude +(1|PopID), family=poisson,data=mod
 model3raw<-lmer(LfCountH ~ Origin * Latitude +(1|blank), family=poisson,data=modeldata) # Test population effect
 anova(model2raw,model1raw) # mom not sig
 anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
-
+1-pchisq(56.023,1)
 modelI <- lmer(LfCountH ~ Origin + Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
 anova(modelI, model1raw)
 
 modelL <- lmer(LfCountH ~ Origin +(1|PopID/Mom), family=poisson,data=modeldata)
-anova(modelL, model1raw)
+anova(modelL, modelI)
 
 modelOraw<-lmer(LfCountH ~ Latitude +(1|PopID/Mom), family=poisson,data=modeldata)
-anova(modelOraw,model1raw) #test for significance of origin - origin NOT sig....!
+anova(modelOraw,modelI) #test for significance of origin - origin NOT sig....!
 
-##nut def, shoot.log##
-modeldata<-n[!is.na(n$ShootH.log),]
+##nut def, shoot##
+modeldata<-n[!is.na(n$ShootMass.g),]
 modeldata$blank<-1
 modeldata$blank<-as.factor(modeldata$blank)
 modeldata$Mom<-as.factor(modeldata$Mom)
 
-model1raw<-lmer(ShootH.log ~ Origin * Latitude + (1|PopID/Mom), family=gaussian,data=modeldata)
-model2raw<-lmer(ShootH.log ~ Origin * Latitude +(1|PopID), family=gaussian,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
-model3raw<-lmer(ShootH.log ~ Origin * Latitude +(1|blank), family=gaussian,data=modeldata) # Test population effect
+model1raw<-lmer(ShootMass.g ~ Origin * Latitude + (1|PopID/Mom), family=gaussian,data=modeldata)
+model2raw<-lmer(ShootMass.g ~ Origin * Latitude +(1|PopID), family=gaussian,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
+model3raw<-lmer(ShootMass.g ~ Origin * Latitude +(1|blank), family=gaussian,data=modeldata) # Test population effect
 anova(model2raw,model1raw) # mom not sig
 anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
-
-modelI <- lmer(ShootH.log ~ Origin + Latitude + (1|PopID), family=gaussian,data=modeldata)
+1-pchisq(15.96,1)
+modelI <- lmer(ShootMass.g ~ Origin + Latitude + (1|PopID), family=gaussian,data=modeldata)
 anova(modelI, model2raw)
 
-modelL <- lmer(ShootH.log ~ Origin +(1|PopID), family=gaussian,data=modeldata)
+modelL <- lmer(ShootMass.g ~ Origin +(1|PopID), family=gaussian,data=modeldata)
 anova(modelL, modelI)
 
-modelOraw<-lmer(ShootH.log ~ Latitude +(1|PopID), family=gaussian,data=modeldata)
+modelOraw<-lmer(ShootMass.g ~ Latitude +(1|PopID), family=gaussian,data=modeldata)
 anova(modelOraw,modelI)
 
-modelO<-lmer(ShootH.log ~ (1|PopID), family=gaussian,data=modeldata)
+# modelO<-lmer(ShootMass.g ~ (1|PopID), family=gaussian,data=modeldata)
+# anova(modelO,modelL)
+
+##nut, root.log
+modeldata<-n[!is.na(n$RootH.log),]
+modeldata$blank<-1
+modeldata$blank<-as.factor(modeldata$blank)
+modeldata$Mom<-as.factor(modeldata$Mom)
+1-pchisq(42.65,1)
+modelI <- lmer(RootH.log ~ Origin + Latitude + (1|PopID), family=gaussian,data=modeldata)
+modelL <- lmer(RootH.log ~ Origin +(1|PopID), family=gaussian,data=modeldata)
+anova(modelL, modelI)
+
+modelOraw<-lmer(RootH.log ~ Latitude +(1|PopID), family=gaussian,data=modeldata)
+anova(modelOraw,modelI)
+
+# modelO<-lmer(RootH.log ~ (1|PopID), family=gaussian,data=modeldata)
+# anova(modelO,modelL)
+
+##nut, crown
+modeldata<-n[!is.na(n$CrownDiam.mm),]
+modeldata$blank<-1
+modeldata$blank<-as.factor(modeldata$blank)
+modeldata$Mom<-as.factor(modeldata$Mom)
+1-pchisq(26.05,1)
+modelI <- lmer(CrownDiam.mm ~ Origin + Latitude + (1|PopID), family=gaussian,data=modeldata)
+modelL <- lmer(CrownDiam.mm ~ Origin +(1|PopID), family=gaussian,data=modeldata)
+anova(modelL, modelI)
+
+# modelOraw<-lmer(CrownDiam.mm ~ Latitude +(1|PopID), family=gaussian,data=modeldata)
+# anova(modelOraw,modelI)
+
+modelO<-lmer(CrownDiam.mm ~ (1|PopID), family=gaussian,data=modeldata)
 anova(modelO,modelL)
+
+##nut, lxwH
+modeldata<-n[!is.na(n$lxwH),]
+modeldata$blank<-1
+modeldata$blank<-as.factor(modeldata$blank)
+modeldata$Mom<-as.factor(modeldata$Mom)
+1-pchisq(7.97,1)
+modelI <- lmer(lxwH ~ Origin + Latitude + (1|PopID), family=gaussian,data=modeldata)
+modelL <- lmer(lxwH ~ Origin +(1|PopID), family=gaussian,data=modeldata)
+anova(modelL, modelI)
+
+# modelOraw<-lmer(lxwH ~ Latitude +(1|PopID), family=gaussian,data=modeldata)
+# anova(modelOraw,modelI)
+
+modelO<-lmer(lxwH ~ (1|PopID), family=gaussian,data=modeldata)
+anova(modelO,modelL)
+
+
 
 ####Cut, Origin * Lat####
 cu<-read.table("STCutsubset.txt", header=T, sep="\t", quote='"', row.names=1) #cutsubset
 head(cu)
 cuLR <- lapply(names(cu)[c(13:14, 42)],function(n) CGtrait.LR.int(n,cu)) #crow, root, root.log, all gaussian
-dchisq(13.036,1)
+1-pchisq(10.85,1)
 #non-gaussian?
 # cu<- cbind(cu, bolt.bin=as.numeric(cu$BoltedatH)-1)
 # write.table(cu, file="STCutsubset.txt", sep="\t", quote=F)
@@ -367,6 +497,19 @@ anova(modelO,modelI)
 modelL <- lmer(RootH.log ~ Latitude +(1|PopID), family=gaussian,data=modeldata)
 anova(modelL,modelI) 
 
+##cut, crown
+modeldata<-cu[!is.na(cu$CrownDiam.mm),]
+modeldata$blank<-1
+modeldata$blank<-as.factor(modeldata$blank)
+modeldata$Mom<-as.factor(modeldata$Mom)
+
+modelI <- lmer(CrownDiam.mm ~ Origin + Latitude + (1|PopID), family=gaussian,data=modeldata)
+modelO <- lmer(CrownDiam.mm ~ Origin +(1|PopID), family=gaussian,data=modeldata)
+anova(modelO,modelI) 
+
+modelL <- lmer(CrownDiam.mm ~ Latitude +(1|PopID), family=gaussian,data=modeldata)
+anova(modelL,modelI)
+
 ####cut, lf count, harvest, mom is sig, do by hand###
 modeldata<-cu[!is.na(cu$LfCountH),]
 modeldata$blank<-1
@@ -382,11 +525,11 @@ anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what y
 modelI <- lmer(LfCountH ~ Origin + Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
 anova(modelI,model1raw)
 
-# modelL <- lmer(LfCountH ~ Origin +(1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelL,model1raw) 
-# 
-# modelOraw<-lmer(LfCountH ~ Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelOraw,model1raw) #test for significance of origin 
+modelL <- lmer(LfCountH ~ Origin +(1|PopID/Mom), family=poisson,data=modeldata)
+anova(modelL,modelI) 
+
+modelOraw<-lmer(LfCountH ~ Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
+anova(modelOraw,modelI) #test for significance of origin 
 
 ###cut, bolt.bin, binomial###
 modeldata<-cu[!is.na(cu$BoltedatH),]
@@ -396,15 +539,12 @@ modeldata$blank<-as.factor(modeldata$blank)
 modeldata$Mom<-as.factor(modeldata$Mom)
 
 model1<-lmer(bolt.bin ~ Origin *Latitude +(1|PopID/Mom), family=binomial,data=modeldata)
-
-
 # with(modeldata, bolt.bin[order(Latitude)]) 
-model4<-lmer(bolt.bin ~ Origin+Latitude +(1|PopID/Mom), family=binomial,data=modeldata)
-model5 <- lmer(bolt.bin~ Origin+Latitude +(1|PopID), family=binomial,data=modeldata)
-anova(model5, model4)
-model6 <- lmer(bolt.bin~ Origin+Latitude +(1|blank), family=binomial,data=modeldata)
-anova(model6, model5)
-
+# model4<-lmer(bolt.bin ~ Origin+Latitude +(1|PopID/Mom), family=binomial,data=modeldata)
+# model5 <- lmer(bolt.bin~ Origin+Latitude +(1|PopID), family=binomial,data=modeldata)
+# anova(model5, model4)
+# model6 <- lmer(bolt.bin~ Origin+Latitude +(1|blank), family=binomial,data=modeldata)
+# anova(model6, model5)
 model2<-lmer(bolt.bin ~ Origin *Latitude +(1|PopID), family=binomial,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
 model3<-lmer(bolt.bin ~ Origin *Latitude +(1|blank), family=binomial,data=modeldata) # Test population effect
 anova(model2,model1) # mom sig
@@ -455,7 +595,7 @@ anova(modelg1, modelg) #'Deviance' is chisq value
 1-pchisq(14.456,1)
 anova(modelg3,modelg1)
 1-pchisq(0.0005405,1)
-anova(modelg2,modelg1)
+anova(modelg3)
 1-pchisq(12.855,1)
 
 # modelg4 <- glm(bolt.bin ~ Latitude*Origin, family=binomial,data=modeldata)
@@ -479,11 +619,11 @@ anova(model3,model2) # pop is sig. If it says there are 0 d.f. then what you wan
 modelI <- lmer(BoltDate ~ Origin +Latitude+(1|PopID/Mom), family=poisson,data=modeldata)
 anova(modelI, model1)
 
-# modelL<-lmer(BoltDate ~ Origin + (1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelL,model1) #test for significant interaction btw Origin and Bolted - not sig
-# 
-# modelO<-lmer(BoltDate ~ Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelO,model1) #test for significance of origin - origin not sig!
+modelL<-lmer(BoltDate ~ Origin + (1|PopID/Mom), family=poisson,data=modeldata)
+anova(modelL,modelI) #test for significant interaction btw Origin and Bolted - not sig
+
+modelO<-lmer(BoltDate ~ Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
+anova(modelO,modelI) #test for significance of origin - origin not sig!
 
 #cut, boltdate, extra covariates#
 modeldata<-cu[!is.na(cu$BoltDate),]
@@ -548,10 +688,24 @@ anova(model3,model2) # pop is sig. If it says there are 0 d.f. then what you wan
 modelI<-lmer(Death ~ Origin + Latitude +(1|blank), family=poisson,data=modeldata)
 anova(modelI,model3) #test for significant interaction btw Origin and Bolted - not sig
 
-# modelL <- lmer(Death ~ Origin +(1|PopID), family=poisson,data=modeldata)
-# 
-# modelO<-lmer(Death ~ LfLgth1+(1|PopID), family=poisson,data=modeldata)
-# anova(modelO,modelL1) #test for significance of origin - origin not sig!
+modelL <- lmer(Death ~ Origin +(1|blank), family=poisson,data=modeldata)
+anova(modelL, modelI)
+
+modelO<-lmer(Death ~ Latitude+(1|blank), family=poisson,data=modeldata)
+anova(modelO,modelI) #test for significance of origin - origin not sig!
+#try glm
+modelg <- glm(Death ~ Origin*Latitude, family=poisson,data=modeldata)
+modelg1 <- glm(Death ~ Origin+Latitude, family=poisson,data=modeldata)
+anova(modelg1, modelg) #'Deviance' is chisq value
+1-pchisq(chisq, df)
+
+modelg3<- glm(Death ~ Origin, family=poisson,data=modeldata)
+anova(modelg3,modelg1)
+1-pchisq(5.5154, 1)
+modelg2<- glm(Death ~ Latitude, family=poisson,data=modeldata)
+anova(modelg2,modelg1)
+1-pchisq(9.0533, 1)
+
 
 #drought, wilt, extra covariates#
 modeldata<-d[!is.na(d$Wilt),]
@@ -603,13 +757,13 @@ model2<-lmer(TotWilt ~ Origin * Latitude +(1|PopID), family=poisson,data=modelda
 model3<-lmer(TotWilt ~ Origin * Latitude +(1|blank), family=poisson,data=modeldata) # Test population effect
 anova(model2,model1) # mom sig
 anova(model3,model2) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
+1-pchisq(1.1142, 1)
+modelI<-lmer(TotWilt ~ Origin + Latitude +(1|blank), family=poisson,data=modeldata)
+anova(modelI,model3) #test for significant interaction btw Origin and Bolted - not sig
 
-modelI<-lmer(TotWilt ~ Origin + Latitude +(1|PopID), family=poisson,data=modeldata)
-anova(modelI,model2) #test for significant interaction btw Origin and Bolted - not sig
-
-modelL <- lmer(TotWilt ~ Origin +(1|PopID), family=poisson,data=modeldata)
+modelL <- lmer(TotWilt ~ Origin +(1|blank), family=poisson,data=modeldata)
 anova(modelL, modelI)
-modelO<-lmer(TotWilt ~ Latitude+(1|PopID), family=poisson,data=modeldata)
+modelO<-lmer(TotWilt ~ Latitude+(1|blank), family=poisson,data=modeldata)
 anova(modelO,modelI) #test for significance of origin - origin not sig!
 modelI
 int<-2.591741#inv mean
@@ -618,6 +772,51 @@ pI<-exp(int)
 pN<-exp(int+B)
 pI
 pN
+#try glm
+modelg <- glm(TotWilt ~ Origin*Latitude, family=poisson,data=modeldata)
+modelg1 <- glm(TotWilt ~ Origin+Latitude, family=poisson,data=modeldata)
+anova(modelg1, modelg) #'Deviance' is chisq value
+1-pchisq(chisq, df)
+
+modelg3<- glm(TotWilt ~ Origin, family=poisson,data=modeldata)
+anova(modelg3,modelg1)
+1-pchisq(5.5154, 1)
+modelg2<- glm(TotWilt ~ Latitude, family=poisson,data=modeldata)
+anova(modelg2,modelg1)
+1-pchisq(9.0533, 1)
+
+#drought, wilt
+modeldata<-d[!is.na(d$Wilt),]
+modeldata$blank<-1
+modeldata$blank<-as.factor(modeldata$blank)
+modeldata$Mom<-as.factor(modeldata$Mom)
+
+model1<-lmer(Wilt ~ Origin * Latitude +(1|PopID/Mom), family=poisson,data=modeldata)
+model2<-lmer(Wilt ~ Origin * Latitude +(1|PopID), family=poisson,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
+model3<-lmer(Wilt ~ Origin * Latitude +(1|blank), family=poisson,data=modeldata) # Test population effect
+anova(model2,model1) # mom sig
+anova(model3,model2) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
+1-pchisq(2.1202, 1)
+modelI<-lmer(Wilt ~ Origin + Latitude +(1|blank), family=poisson,data=modeldata)
+anova(modelI,model3) #test for significant interaction btw Origin and Bolted - not sig
+
+modelL <- lmer(Wilt ~ Origin +(1|blank), family=poisson,data=modeldata)
+anova(modelL, modelI)
+modelO<-lmer(Wilt ~ Latitude+(1|blank), family=poisson,data=modeldata)
+anova(modelO,modelI) #test for significance of origin - origin not sig!
+
+#try glm
+modelg <- glm(Wilt ~ Origin*Latitude, family=poisson,data=modeldata)
+modelg1 <- glm(Wilt ~ Origin+Latitude, family=poisson,data=modeldata)
+anova(modelg1, modelg) #'Deviance' is chisq value
+1-pchisq(chisq, df)
+
+modelg3<- glm(Wilt ~ Origin, family=poisson,data=modeldata)
+anova(modelg3,modelg1)
+1-pchisq(5.5154, 1)
+modelg2<- glm(Wilt ~ Latitude, family=poisson,data=modeldata)
+anova(modelg2,modelg1)
+1-pchisq(9.0533, 1)
 
 ####Flood, Origin * Lat####
 f<-read.table("STFloodsubset.txt", header=T, sep="\t", quote='"', row.names=1) #floodsubset
@@ -643,11 +842,24 @@ anova(model3,model2) # pop is sig. If it says there are 0 d.f. then what you wan
 modelI<-lmer(FloatDate ~ Origin + Latitude +(1|blank), family=poisson,data=modeldata)
 anova(modelI,model3) #test for significant interaction btw Origin and Bolted - not sig
 
-# modelL <- lmer(FloatDate ~ Origin + (1|blank), family=poisson,data=modeldata)
-# anova(model)
-# 
-# modelO<-lmer(FloatDate ~ (LfLgth1|PopID), family=poisson,data=modeldata)
-# anova(modelO,modelL2) #test for significance of origin - origin not sig
+modelL <- lmer(FloatDate ~ Origin + (1|blank), family=poisson,data=modeldata)
+anova(modelL, modelI)
+
+modelO<-lmer(FloatDate ~ Latitude + (1|blank), family=poisson,data=modeldata)
+anova(modelO,modelI) #test for significance of origin - origin not sig
+
+#try glm
+modelg <- glm(FloatDate ~ Origin*Latitude, family=poisson,data=modeldata)
+modelg1 <- glm(FloatDate ~ Origin+Latitude, family=poisson,data=modeldata)
+anova(modelg1, modelg) #'Deviance' is chisq value
+1-pchisq(chisq, df)
+
+modelg3<- glm(FloatDate ~ Origin, family=poisson,data=modeldata)
+anova(modelg3,modelg1)
+1-pchisq(5.5154, 1)
+modelg2<- glm(FloatDate ~ Latitude, family=poisson,data=modeldata)
+anova(modelg2,modelg1)
+1-pchisq(9.0533, 1)
 
 ####Flood, yellow####
 modeldata<-f[!is.na(f$Yellow),]
@@ -661,14 +873,48 @@ model3<-lmer(Yellow ~ Origin * Latitude +(1|blank), family=poisson,data=modeldat
 anova(model2,model1) # mom sig
 anova(model3,model2) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
 
-modelI<-lmer(Yellow ~ Origin + Latitude +(1|PopID), family=poisson,data=modeldata)
+modelI<-lmer(Yellow ~ Origin + Latitude +(1|blank), family=poisson,data=modeldata)
 anova(modelI,model3) #test for significant interaction btw Origin and Bolted - not sig
 
-modelL <- lmer(Yellow ~ Origin + (1|PopID), family=poisson,data=modeldata)
+modelL <- lmer(Yellow ~ Origin + (1|blank), family=poisson,data=modeldata)
 anova(modelL, modelI)
 
-modelO<-lmer(Yellow ~ (1|PopID), family=poisson,data=modeldata)
+modelO<-lmer(Yellow ~ (1|blank), family=poisson,data=modeldata)
 anova(modelO,modelL) #test for significance of origin - origin not sig
+
+#try glm
+modelg <- glm(Yellow ~ Origin*Latitude, family=poisson,data=modeldata)
+modelg1 <- glm(Yellow ~ Origin+Latitude, family=poisson,data=modeldata)
+anova(modelg1, modelg) #'Deviance' is chisq value
+1-pchisq(chisq, df)
+
+modelg3<- glm(Yellow ~ Origin, family=poisson,data=modeldata)
+anova(modelg3,modelg1)
+1-pchisq(5.5154, 1)
+modelg2<- glm(Yellow ~ Latitude, family=poisson,data=modeldata)
+anova(modelg2,modelg1)
+1-pchisq(9.0533, 1)
+
+##flood, death
+modeldata<-f[!is.na(f$Death),]
+modeldata$blank<-1
+modeldata$blank<-as.factor(modeldata$blank)
+modeldata$Mom<-as.factor(modeldata$Mom)
+
+model1<-lmer(Death ~ Origin * Latitude +(1|PopID/Mom), family=poisson,data=modeldata)
+model2<-lmer(Death ~ Origin * Latitude +(1|PopID), family=poisson,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
+model3<-lmer(Death ~ Origin * Latitude +(1|blank), family=poisson,data=modeldata) # Test population effect
+anova(model2,model1) # mom sig
+anova(model3,model2) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
+1-pchisq(7.0121, 1)
+modelI<-lmer(Death ~ Origin + Latitude +(1|PopID), family=poisson,data=modeldata)
+anova(modelI,model2) #test for significant interaction btw Origin and Bolted - not sig
+
+modelL <- lmer(Death ~ Origin + (1|PopID), family=poisson,data=modeldata)
+anova(modelL, modelI)
+
+modelO<-lmer(Death ~ Latitude + (1|PopID), family=poisson,data=modeldata)
+anova(modelO,modelI) #test for significance of origin - origin not sig
 
 ####Mom, Origin * Lat####
 mom<-read.table("STMomsubset.txt", header=T, sep="\t", quote='"', row.names=1) #momsubset
@@ -690,15 +936,16 @@ modeldata$blank<-as.factor(modeldata$blank)
 model2<-lmer(Sdwt.log ~ Origin *Latitude+(1|PopID), family=gaussian,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
 model3<-lmer(Sdwt.log ~ Origin *Latitude+(1|blank), family=gaussian,data=modeldata) # Test population effect
 anova(model3,model2) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
+1-pchisq(76.54,1)
 
 modelI <- lmer(Sdwt.log ~ Origin +Latitude+(1|PopID), family=gaussian,data=modeldata)
 anova(modelI, model2)
 
-# modelL<-lmer(Sdwt.log ~ Origin + (1|PopID), family=gaussian, data=modeldata)
-# anova(modelL, model2)
-# 
-# modelO<-lmer(Sdwt.log ~ (1|PopID), family=gaussian,data=modeldata)
-# anova(modelO,modelL) #test for significance of origin - origin not sig....?
+modelL<-lmer(Sdwt.log ~ Origin + (1|PopID), family=gaussian, data=modeldata)
+anova(modelL, modelI)
+
+modelO<-lmer(Sdwt.log ~ (1|PopID), family=gaussian,data=modeldata)
+anova(modelO,modelL) #test for significance of origin - origin not sig....?
 
 ####Mom, germ count###
 modeldata<-mom[!is.na(mom$GermCount),]
@@ -708,16 +955,17 @@ modeldata$blank<-as.factor(modeldata$blank)
 model2<-lmer(GermCount ~ Origin * Latitude+ SeedCount +(1|PopID), family=poisson, data=modeldata)
 model3<-lmer(GermCount ~ Origin * Latitude+SeedCount + (1|blank), family=poisson, data=modeldata)
 anova(model3, model2)
+1-pchisq(261.46,1)
 
 modelI <- lmer(GermCount ~ Origin + Latitude+ SeedCount +(1|PopID), family=poisson, data=modeldata)
 anova(modelI, model2)
 
-# modelL<-lmer(GermCount ~ Origin +SeedCount+ (1|PopID), family=poisson, data=modeldata)
-# anova(modelL, model2)
-# 
-# modelO<-lmer(GermCount ~ SeedCount + (1|PopID), family=poisson, data=modeldata)
-# anova(modelO, modelL)
-# 
+modelL<-lmer(GermCount ~ Origin +SeedCount+ (1|PopID), family=poisson, data=modeldata)
+anova(modelL, modelI)
+
+modelO<-lmer(GermCount ~ SeedCount + (1|PopID), family=poisson, data=modeldata)
+anova(modelO, modelL)
+
 # modelL
 # int<- -0.42767
 # #inv mean
@@ -776,14 +1024,15 @@ modeldata$blank<-as.factor(modeldata$blank)
 model2<-lmer(AvgGermDate.log ~ Origin *Latitude+(1|PopID), family=gaussian,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
 model3<-lmer(AvgGermDate.log ~ Origin *Latitude+(1|blank), family=gaussian,data=modeldata) # Test population effect
 anova(model3,model2) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
+1-pchisq(48.113,1)
 
 modelI <- lmer(AvgGermDate.log ~ Origin +Latitude+(1|PopID), family=gaussian,data=modeldata) 
 anova(modelI,model2)
 
-# modelL<-lmer(AvgGermDate.log ~ Origin +(1|PopID), family=, data=modeldata)
-# anova(modelL,model2)
-# 
-# modelO<-lmer(AvgGermDate.log ~ (1|PopID), family=gaussian,data=modeldata)
-# anova(modelO,modelL) #test for significance of origin - origin not sig....?
-# 
+modelL<-lmer(AvgGermDate.log ~ Origin +(1|PopID), family=, data=modeldata)
+anova(modelL,model2)
+
+modelO<-lmer(AvgGermDate.log ~ (1|PopID), family=gaussian,data=modeldata)
+anova(modelO,modelL) #test for significance of origin - origin not sig....?
+
 # modelL
