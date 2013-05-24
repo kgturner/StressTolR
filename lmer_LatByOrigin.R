@@ -216,6 +216,9 @@ anova(modelL, modelI)
 modelOraw<-lmer(lxwH ~ Latitude +(1|PopID/Mom), family=gaussian,data=modeldata)
 anova(modelOraw,modelI) #test for significance of origin - origin NOT sig....!
 
+modelOraw
+lsmeans(modelI, ~ Origin, conf=95)
+
 ##control, crown
 modeldata<-co[!is.na(co$CrownDiam.mm),]
 modeldata$blank<-1
@@ -240,6 +243,9 @@ print(anova(modelOraw,modelI), digits = 22)
 (lambda <- (-2)*(-681.7698599890596824480 - (-681.7873280911552456018)))
 1-pchisq(-0.0349362,1)
 
+modelOraw
+lsmeans(modelI, ~Origin, conf=95)
+
 ##control, shoot
 modeldata<-co[!is.na(co$ShootMass.g),]
 modeldata$blank<-1
@@ -255,7 +261,6 @@ anova(modelOraw,modelI)
 
 lsmeans(modelI, ~ Origin, conf=95)
 
-
 ##control, root
 modeldata<-co[!is.na(co$RootH.log),]
 modeldata$blank<-1
@@ -268,7 +273,8 @@ anova(modelL, modelI)
 
 modelOraw<-lmer(RootH.log ~ Latitude +(1|PopID), family=gaussian,data=modeldata)
 anova(modelOraw,modelI)
- 
+
+CI.LS.poisson(modelI)
 
 ####control, lf count, mom sig so do by hand#####
 #poisson on raw data
@@ -325,6 +331,8 @@ anova(modelL, modelI)
 
 modelO<-lmer(BoltDate ~  (1|PopID/Mom), family=poisson,data=modeldata)
 anova(modelO,modelL) #test for significance of origin - origin not sig!
+
+CI.LS.poisson(modelL)
 
 ###control boltedatH, mom sig, do by hand, binomial
 #all plants, not just bolters
@@ -417,6 +425,7 @@ summary(modeldata[modeldata$Origin=="nat",]$BoltedatH)
 
 plot(modeldata[modeldata$Origin=="inv",]$Latitude, modeldata[modeldata$Origin=="inv",]$BoltedatH)
 plot(modeldata[modeldata$Origin=="nat",]$Latitude, modeldata[modeldata$Origin=="nat",]$BoltedatH)
+
 ####Nut def, Origin * Lat####
 n<-read.table("STNutsubset.txt", header=T, sep="\t", quote='"', row.names=1) #nutsubset
 head(n)
@@ -462,6 +471,8 @@ anova(modelL, modelI)
 modelOraw<-lmer(LfCountH ~ Latitude +(1|PopID/Mom), family=poisson,data=modeldata)
 anova(modelOraw,modelI) #test for significance of origin - origin NOT sig....!
 
+CI.LS.poisson(modelI)
+
 ##nut def, shoot##
 modeldata<-n[!is.na(n$ShootMass.g),]
 modeldata$blank<-1
@@ -486,6 +497,8 @@ anova(modelOraw,modelI)
 # modelO<-lmer(ShootMass.g ~ (1|PopID), family=gaussian,data=modeldata)
 # anova(modelO,modelL)
 
+lsmeans(modelI, ~Origin, conf=95)
+
 ##nut, root.log
 modeldata<-n[!is.na(n$RootH.log),]
 modeldata$blank<-1
@@ -501,6 +514,8 @@ anova(modelOraw,modelI)
 
 # modelO<-lmer(RootH.log ~ (1|PopID), family=gaussian,data=modeldata)
 # anova(modelO,modelL)
+
+CI.LS.poisson(modelI)
 
 ##nut, crown
 modeldata<-n[!is.na(n$CrownDiam.mm),]
@@ -518,6 +533,8 @@ anova(modelL, modelI)
 modelO<-lmer(CrownDiam.mm ~ (1|PopID), family=gaussian,data=modeldata)
 anova(modelO,modelL)
 
+lsmeans(modelL, ~Origin, conf=95)
+
 ##nut, lxwH
 modeldata<-n[!is.na(n$lxwH),]
 modeldata$blank<-1
@@ -534,7 +551,7 @@ anova(modelL, modelI)
 modelO<-lmer(lxwH ~ (1|PopID), family=gaussian,data=modeldata)
 anova(modelO,modelL)
 
-
+lsmeans(modelL, ~Origin, conf=95)
 
 ####Cut, Origin * Lat####
 cu<-read.table("STCutsubset.txt", header=T, sep="\t", quote='"', row.names=1) #cutsubset
@@ -576,6 +593,8 @@ anova(modelO,modelI)
 modelL <- lmer(RootH.log ~ Latitude +(1|PopID), family=gaussian,data=modeldata)
 anova(modelL,modelI) 
 modelI
+CI.LS.poisson(modelI)
+
 ##cut, crown
 modeldata<-cu[!is.na(cu$CrownDiam.mm),]
 modeldata$blank<-1
@@ -588,6 +607,8 @@ anova(modelO,modelI)
 
 modelL <- lmer(CrownDiam.mm ~ Latitude +(1|PopID), family=gaussian,data=modeldata)
 anova(modelL,modelI)
+
+lsmeans(modelI, ~Origin, conf=95)
 
 ####cut, lf count, harvest, mom is sig, do by hand###
 modeldata<-cu[!is.na(cu$LfCountH),]
@@ -609,6 +630,8 @@ anova(modelL,modelI)
 
 modelOraw<-lmer(LfCountH ~ Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
 anova(modelOraw,modelI) #test for significance of origin 
+
+CI.LS.poisson(modelI)
 
 ###cut, bolt.bin, binomial###
 modeldata<-cu[!is.na(cu$BoltedatH),]
@@ -633,22 +656,22 @@ print(anova(model3,model2), digits=22)
 1-pchisq(-4.040663e-08,1)
 
 #for models with no significant or nearly sig (basically p>0.2) random effects, use glm instead
-# modelI <- lmer(bolt.bin ~ Origin +Latitude +(1|blank), family=binomial,data=modeldata)
-# anova(modelI, model3)
-# modelL <- lmer(bolt.bin ~ Origin +(1|blank), family=binomial,data=modeldata)
-# anova(modelL, model3)
-# anova(modelI, modelL)
-# modelL
-# (lambda <- (-2)*(-199.54 - (-191.60)))
-# 1-pchisq(lambda,1)
-# modelO<-lmer(bolt.bin ~ Latitude+(1|blank), family=binomial,data=modeldata)
-# anova(modelO,model3) #test for significance of origin - origin sig!
-# anova(modelO, modelI)
-# modelO2<- lmer(bolt.bin ~ (1|blank), family=binomial,data=modeldata)
-# anova(modelL, modelO2)
-# modelP <- lmer(bolt.bin ~ Origin + (1|PopID), family = binomial, data=modeldata)
-# anova(modelP, modelL)
-# model3
+modelI <- lmer(bolt.bin ~ Origin +Latitude +(1|blank), family=binomial,data=modeldata)
+anova(modelI, model3)
+modelL <- lmer(bolt.bin ~ Origin +(1|blank), family=binomial,data=modeldata)
+anova(modelL, model3)
+anova(modelI, modelL)
+modelL
+(lambda <- (-2)*(-199.54 - (-191.60)))
+1-pchisq(lambda,1)
+modelO<-lmer(bolt.bin ~ Latitude+(1|blank), family=binomial,data=modeldata)
+anova(modelO,model3) #test for significance of origin - origin sig!
+anova(modelO, modelI)
+modelO2<- lmer(bolt.bin ~ (1|blank), family=binomial,data=modeldata)
+anova(modelL, modelO2)
+modelP <- lmer(bolt.bin ~ Origin + (1|PopID), family = binomial, data=modeldata)
+anova(modelP, modelL)
+model3
 
 #calculating means 
 # int<--172.961 #inv mean
@@ -663,6 +686,11 @@ print(anova(model3,model2), digits=22)
 # #check by looking at percentages
 # summary(cu[cu$Origin=="nat",]) #146 rows, 39 boltedatH = 27%
 # summary(cu[cu$Origin=="inv",]) #55 rows, 8 boltedatH = 6.4%
+
+CI.LS.binomial(model3)
+lsmeans(model1, ~Origin, conf=95)
+
+CI.LS.binomial(model)
 
 #also check glm
 modelg <- glm(bolt.bin ~ Origin*Latitude, family=binomial,data=modeldata)
@@ -680,6 +708,8 @@ anova(modelg3)
 # modelg4 <- glm(bolt.bin ~ Latitude*Origin, family=binomial,data=modeldata)
 # modelg5 <- glm(bolt.bin ~ Latitude+Origin, family=binomial,data=modeldata)
 # anova(modelg5, modelg4)
+
+CI.LS.binomial(modelg1)
 
 ###cut, harvest, bolt date, mom is sig, do by hand###
 #given that it's bolted....
