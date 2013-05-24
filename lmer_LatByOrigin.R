@@ -65,6 +65,8 @@ anova(modelL, modelI)
 modelOraw<-lmer(ShootMass.gA ~ Latitude +(1|PopID/Mom), family=gaussian,data=modeldata)
 anova(modelOraw,modelI) #test for significance of origin - origin not sig
 
+lsmeans(modelI, ~ Origin, conf=95)
+
 ###allo, root mass###
 modeldata<-al[!is.na(al$RootA.log),]
 modeldata$blank<-1
@@ -86,6 +88,8 @@ anova(modelL, modelI)
 modelOraw<-lmer(RootA.log ~ Latitude + (1|PopID/Mom), family=gaussian,data=modeldata)
 anova(modelOraw,modelI) #test for significance of origin - origin not sig
 
+CI.LS.poisson(modelI)
+
 ###allo, crown###
 modeldata<-al[!is.na(al$CrownDiam.mmA),]
 modeldata$blank<-1
@@ -98,20 +102,22 @@ model3raw<-lmer(CrownDiam.mmA  ~ Origin * Latitude+ (1|blank), family=gaussian,d
 anova(model2raw,model1raw) # mom is sig!
 anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
 1-pchisq(18.974,1)
-modelI <- lmer(CrownDiam.mmA  ~ Origin + Latitude + (1|PopID/Mom), family=gaussian,data=modeldata)
-anova(modelI,model1raw)
-
-modelL<-lmer(CrownDiam.mmA  ~ Origin + (1|PopID/Mom), family=gaussian,data=modeldata)
-anova(modelL, modelI)
-
-modelOraw<-lmer(CrownDiam.mmA ~ Latitude + (1|PopID/Mom), family=gaussian,data=modeldata)
-anova(modelOraw,modelI)
+#mom marginally sig
+# modelI <- lmer(CrownDiam.mmA  ~ Origin + Latitude + (1|PopID/Mom), family=gaussian,data=modeldata)
+# anova(modelI,model1raw)
+# 
+# modelL<-lmer(CrownDiam.mmA  ~ Origin + (1|PopID/Mom), family=gaussian,data=modeldata)
+# anova(modelL, modelI)
+# 
+# modelOraw<-lmer(CrownDiam.mmA ~ Latitude + (1|PopID/Mom), family=gaussian,data=modeldata)
+# anova(modelOraw,modelI)
 
 
 modelI <- lmer(CrownDiam.mmA  ~ Origin + Latitude + (1|PopID), family=gaussian,data=modeldata)
 modelOraw<-lmer(CrownDiam.mmA ~ Latitude + (1|PopID), family=gaussian,data=modeldata)
 anova(modelOraw,modelI)
 
+lsmeans(modelI, ~Origin, conf=95)
 
 #####m1, Origin * Lat#####
 m1<-read.table("STm1subset.txt", header=T, sep="\t", quote='"', row.names=1) #m1subset
@@ -144,6 +150,8 @@ modelO<-lmer(lxw ~ (1|PopID/Mom), family=gaussian,data=modeldata)
 anova(modelO,modelL) #test for significance of origin - origin not sig....?
 #mom and popID sig, but not Origin! for either log or raw data
 
+lsmeans(modelL, ~ Origin, conf=95)
+
 ####m1, control, lf count####
 modeldata<-m1[!is.na(m1$LfCount1),]
 modeldata$blank<-1
@@ -166,14 +174,11 @@ modelL<-lmer(LfCount1 ~ Origin +(1|PopID/Mom), family=poisson,data=modeldata)
 anova(modelL, modelI)
 
 modelOraw<-lmer(LfCount1 ~ Latitude+(1|PopID/Mom), family=poisson,data=modeldata)
-anova(modelOraw,model1raw) #test for significance of origin - origin NOT sig....!
+anova(modelOraw,modelI) #test for significance of origin - origin NOT sig....!
+
 model1raw
-int<-0.29109 + 0.04405- (0.50455+0.01127)*1.96 #inv mean
-B<- 1.51023 -0.03324 #Originnat estimate from model summary
-pI<-exp(int)
-pN<-exp(int+B)
-pI
-pN
+CI.LS.poisson(model1raw)
+CI.LS.poisson(modelI)
 
 ####Control, Origin * Lat####
 co<-read.table("STControlsubset.txt", header=T, sep="\t", quote='"', row.names=1) #controlsubset
@@ -248,6 +253,9 @@ anova(modelL, modelI)
 modelOraw<-lmer(ShootMass.g ~ Latitude +(1|PopID), family=gaussian,data=modeldata)
 anova(modelOraw,modelI)
 
+lsmeans(modelI, ~ Origin, conf=95)
+
+
 ##control, root
 modeldata<-co[!is.na(co$RootH.log),]
 modeldata$blank<-1
@@ -283,7 +291,19 @@ anova(modelL, modelI)
 
 modelOraw<-lmer(LfCountH ~Latitude+(1|PopID/Mom), family=poisson,data=modeldata)
 anova(modelOraw,modelI) #test for significance of origin - origin NOT sig....!
-anova()
+
+modelI
+CI.poisson(modelI)
+CI.poisson(modelL)
+CI.LS.poisson(modelI)
+#effect size, poisson
+int<-2.766845#inv mean
+B<-2.549578#Originnat estimate from model summary
+pI<-exp(int)
+pN<-exp(int+B)
+pI
+pN
+
 ###control, boltdate, mom sig, do by hand###
 #only bolters
 modeldata<-co[!is.na(co$BoltDate),]
@@ -329,6 +349,19 @@ modelL
 modelO<-lmer(bolt.bin ~ Latitude + (1|PopID/Mom), family=binomial,data=modeldata)
 anova(modelO,modelI) #test for significance of origin??? origin sig!
 model1
+lsmeans(model1, ~Origin, conf=95)
+#lsmean estimates
+int<- -4.474240 #inv mean
+B<--1.150381 #Originnat estimate from model summary
+# Native
+pN<-exp(B)/(exp(B)+1)
+# Introduced (B=0)
+pI<-exp(int)/(exp(int)+1)
+pI  
+pN 
+
+CI.LS.binomial(model1)
+
 #mean estimates
 int<- -25.6701 #inv mean
 B<-32.0353 #Originnat estimate from model summary
@@ -535,14 +568,14 @@ print(anova(model2raw,model1raw), digits=22) # mom not sig
 anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
 1-pchisq(13.036,1)
 modelI <- lmer(RootH.log ~ Origin + Latitude + (1|PopID), family=gaussian,data=modeldata)
-anova(modelI,model1raw)
+anova(modelI,model2raw)
 
 modelO <- lmer(RootH.log ~ Origin +(1|PopID), family=gaussian,data=modeldata)
 anova(modelO,modelI) 
 
 modelL <- lmer(RootH.log ~ Latitude +(1|PopID), family=gaussian,data=modeldata)
 anova(modelL,modelI) 
-
+modelI
 ##cut, crown
 modeldata<-cu[!is.na(cu$CrownDiam.mm),]
 modeldata$blank<-1
