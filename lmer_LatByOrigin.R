@@ -734,6 +734,8 @@ anova(modelL,modelI) #test for significant interaction btw Origin and Bolted - n
 modelO<-lmer(BoltDate ~ Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
 anova(modelO,modelI) #test for significance of origin - origin not sig!
 
+CI.LS.poisson(modelI)
+
 #cut, boltdate, extra covariates#
 modeldata<-cu[!is.na(cu$BoltDate),]
 modeldata$blank<-1
@@ -815,6 +817,8 @@ modelg2<- glm(Death ~ Latitude, family=poisson,data=modeldata)
 anova(modelg2,modelg1)
 1-pchisq(9.0533, 1)
 
+CI.LS.poisson(modelg1)
+
 
 #drought, wilt, extra covariates#
 modeldata<-d[!is.na(d$Wilt),]
@@ -894,6 +898,8 @@ modelg2<- glm(TotWilt ~ Latitude, family=poisson,data=modeldata)
 anova(modelg2,modelg1)
 1-pchisq(9.0533, 1)
 
+CI.LS.poisson(modelg1)
+
 #drought, wilt
 modeldata<-d[!is.na(d$Wilt),]
 modeldata$blank<-1
@@ -926,6 +932,8 @@ anova(modelg3,modelg1)
 modelg2<- glm(Wilt ~ Latitude, family=poisson,data=modeldata)
 anova(modelg2,modelg1)
 1-pchisq(9.0533, 1)
+
+CI.LS.poisson(modelg1)
 
 ####Flood, Origin * Lat####
 f<-read.table("STFloodsubset.txt", header=T, sep="\t", quote='"', row.names=1) #floodsubset
@@ -970,6 +978,8 @@ modelg2<- glm(FloatDate ~ Latitude, family=poisson,data=modeldata)
 anova(modelg2,modelg1)
 1-pchisq(9.0533, 1)
 
+CI.LS.poisson(modelg1)
+
 ####Flood, yellow####
 modeldata<-f[!is.na(f$Yellow),]
 modeldata$blank<-1
@@ -1004,6 +1014,8 @@ modelg2<- glm(Yellow ~ Latitude, family=poisson,data=modeldata)
 anova(modelg2,modelg1)
 1-pchisq(9.0533, 1)
 
+CI.LS.poisson(modelg3)
+
 ##flood, death
 modeldata<-f[!is.na(f$Death),]
 modeldata$blank<-1
@@ -1024,6 +1036,8 @@ anova(modelL, modelI)
 
 modelO<-lmer(Death ~ Latitude + (1|PopID), family=poisson,data=modeldata)
 anova(modelO,modelI) #test for significance of origin - origin not sig
+
+CI.LS.poisson(modelI)
 
 ####Mom, Origin * Lat####
 mom<-read.table("STMomsubset.txt", header=T, sep="\t", quote='"', row.names=1) #momsubset
@@ -1056,6 +1070,8 @@ anova(modelL, modelI)
 modelO<-lmer(Sdwt.log ~ (1|PopID), family=gaussian,data=modeldata)
 anova(modelO,modelL) #test for significance of origin - origin not sig....?
 
+CI.LS.poisson(modelL)
+
 ####Mom, germ count###
 modeldata<-mom[!is.na(mom$GermCount),]
 modeldata$blank<-1
@@ -1084,8 +1100,16 @@ anova(modelO, modelL)
 # pN<-exp(int+B)
 # pI
 # pN
-#germ count with more covariates#
-####Mom, germ count###
+
+CI.LS.poisson(modelL)
+8.63508182678789/15*100
+6.86236222603546/15*100
+10.8657391870729/15*100
+5.12261904337083/15*100
+3.97977801862767/15*100
+6.59364058514856/15*100
+
+####Mom, germ count, with more covariates###
 modeldata<-mom[!is.na(mom$GermCount),]
 modeldata$blank<-1
 modeldata$blank<-as.factor(modeldata$blank)
@@ -1124,7 +1148,6 @@ pN<-exp(int+B)
 pI
 pN
 
-
 ####Mom, germ date####avg, so can't use poisson
 modeldata<-mom[!is.na(mom$AvgGermDate.log),]
 modeldata$blank<-1
@@ -1144,4 +1167,4 @@ anova(modelL,model2)
 modelO<-lmer(AvgGermDate.log ~ (1|PopID), family=gaussian,data=modeldata)
 anova(modelO,modelL) #test for significance of origin - origin not sig....?
 
-# modelL
+CI.LS.poisson(modelL)
