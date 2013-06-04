@@ -257,6 +257,19 @@ grBatHStd <- grBatH1
 grBatHStd$xmin <- c(0,0,20,20,80,100,100,40,40,60,60)
 grBatHStd$xmax <- grBatHStd$xmin + 20
 #reverse stacking, not bolted comes out as white?
+grBatHStd$RevStackymax = 100-(grBatHStd$count/grBatHStd$totcount*100)
+
+# #percentages
+# grBatHn <- grBatH[grBatH$BoltedatH=="n",]
+# grBatHn<- ddply(grBatHn, .(Treatment), transform, ymax = cumsum(count/totcount*100))
+# grBatHn <- ddply(grBatHn, .(Treatment), transform,
+#                  ymin = ymax-(count/totcount*100))
+# 
+# grBatHy <- grBatH[grBatH$BoltedatH=="y",]
+# grBatHy<- ddply(grBatHy, .(Treatment), transform, ymax = 100)
+# grBatHy <- ddply(grBatHy, .(Treatment), transform,
+#                  ymin = ymax-cumsum(count/totcount*100))
+
 
 
 pdf("ST bolted mosaic_bw.pdf", useDingbats=FALSE)
