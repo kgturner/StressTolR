@@ -250,14 +250,18 @@ dev.off()
 col= with( grBatH1, interaction(Origin, Trt, BoltedatH))
 
 colors()[c(312,336,350,366,1,176)]
-colorset <- c("grey51","grey84", "grey51","grey84", "grey51","grey84","white","white","white","white","white","white")
+colorset <- c("white","white","white","white","white","white","grey51","grey84", "grey84", "grey51","grey84","grey51")
 cscale = scale_fill_manual(values=colorset)
 
 grBatHStd <- grBatH1
 grBatHStd$xmin <- c(0,0,20,20,80,100,100,40,40,60,60)
 grBatHStd$xmax <- grBatHStd$xmin + 20
 #reverse stacking, not bolted comes out as white?
-grBatHStd$RevStackymax = 100-(grBatHStd$count/grBatHStd$totcount*100)
+grBatHStd$RevStackymax  <-  grBatHStd$ymax - grBatHStd$ymin
+grBatHStd[grBatHStd$BoltedatH=="Not Bolted",]$RevStackymax  <-  100
+grBatHStd$RevStackymin <- grBatHStd$RevStackymax-grBatHStd$ymax
+grBatHStd[grBatHStd$RevStackymin<0,]$RevStackymin <- 0
+# grBatHStd[grBatHStd$Origin]
 
 # #percentages
 # grBatHn <- grBatH[grBatH$BoltedatH=="n",]
@@ -273,19 +277,21 @@ grBatHStd$RevStackymax = 100-(grBatHStd$count/grBatHStd$totcount*100)
 
 
 pdf("ST bolted mosaic_bw.pdf", useDingbats=FALSE)
-p1 <- ggplot(grBatHStd, aes(ymin = ymin, ymax = ymax, xmin=xmin, xmax=xmax, fill=factor(col)))+
-  geom_rect(colour = I("grey"), size=1.5)+
+
+p1 <- ggplot(grBatHStd, aes(ymin = RevStackymin, ymax = RevStackymax, xmin=xmin, xmax=xmax, fill=factor(col)))+
+  geom_rect(colour = I("grey"), size=1)+
   scale_x_continuous(breaks=c(20,60,100),labels=c("Control", "Herbivory", "Nutrient"), name="Stress Treatments") +
   scale_y_continuous(name="Percent Bolted at Harvest") + theme_bw()+cscale
 p1
 # annotate 
 p1 + theme(panel.grid.minor.y=element_blank(), panel.grid.major.y=element_blank())+
-  annotate(geom="text", x=(grBatHStd$xmax-grBatHStd$xmin)/2 + grBatHStd$xmin, y=105, label=grBatHStd$Origin, size=5) +
+  annotate(geom="text", x=(grBatHStd$xmax-grBatHStd$xmin)/2 + grBatHStd$xmin, y=105, label=grBatHStd$Origin, size=4) +
   #annotate(geom="text", x=(grBatHStd$xmax-grBatHStd$xmin)/2 + grBatHStd$xmin, y=grBatHStd$ymin+2, label=grBatHStd$BoltedatH, size=4)+ 
   theme(legend.position="none", axis.title.x = element_text(size=15, face="bold", vjust=-0.4), 
         axis.title.y = element_text(size=15, face="bold"),axis.text.x = element_text(size=15 ))+ 
   annotate('point',x = 20, y = 102, pch=8, color="black",parse=T, size=3)+annotate('point',x = 23, y = 102, pch=8, color="black",parse=T, size=3)+annotate('point',x = 17, y = 102, pch=8, color="black",parse=T, size=3)+
   annotate('point',x = 60, y = 102, pch=8, color="black",parse=T,size=3)+annotate('point',x = 63, y = 102, pch=8, color="black",parse=T,size=3)+annotate('point',x = 57, y = 102, pch=8, color="black",parse=T,size=3)
+
 dev.off()
 
 
