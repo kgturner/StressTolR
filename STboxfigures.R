@@ -261,20 +261,6 @@ grBatHStd$RevStackymax  <-  grBatHStd$ymax - grBatHStd$ymin
 grBatHStd[grBatHStd$BoltedatH=="Not Bolted",]$RevStackymax  <-  100
 grBatHStd$RevStackymin <- grBatHStd$RevStackymax-grBatHStd$ymax
 grBatHStd[grBatHStd$RevStackymin<0,]$RevStackymin <- 0
-# grBatHStd[grBatHStd$Origin]
-
-# #percentages
-# grBatHn <- grBatH[grBatH$BoltedatH=="n",]
-# grBatHn<- ddply(grBatHn, .(Treatment), transform, ymax = cumsum(count/totcount*100))
-# grBatHn <- ddply(grBatHn, .(Treatment), transform,
-#                  ymin = ymax-(count/totcount*100))
-# 
-# grBatHy <- grBatH[grBatH$BoltedatH=="y",]
-# grBatHy<- ddply(grBatHy, .(Treatment), transform, ymax = 100)
-# grBatHy <- ddply(grBatHy, .(Treatment), transform,
-#                  ymin = ymax-cumsum(count/totcount*100))
-
-
 
 pdf("ST bolted mosaic_bw.pdf", useDingbats=FALSE)
 

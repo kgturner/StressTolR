@@ -357,7 +357,7 @@ modelL
 modelO<-lmer(bolt.bin ~ Latitude + (1|PopID/Mom), family=binomial,data=modeldata)
 anova(modelO,modelI) #test for significance of origin??? origin sig!
 model1
-lsmeans(model1, ~Origin, conf=95)
+
 #lsmean estimates
 int<- -4.474240 #inv mean
 B<--1.150381 #Originnat estimate from model summary
@@ -368,7 +368,7 @@ pI<-exp(int)/(exp(int)+1)
 pI  
 pN 
 
-CI.LS.binomial(model1)
+CI.LS.binomial(modelI)#exclude sig int
 
 #mean estimates
 int<- -25.6701 #inv mean
@@ -703,7 +703,7 @@ anova(modelg1, modelg) #'Deviance' is chisq value
 anova(modelg3,modelg1)
 1-pchisq(0.0005405,1)
 anova(modelg3)
-1-pchisq(12.855,1)
+1-pchisq(12.858,1)
 
 # modelg4 <- glm(bolt.bin ~ Latitude*Origin, family=binomial,data=modeldata)
 # modelg5 <- glm(bolt.bin ~ Latitude+Origin, family=binomial,data=modeldata)
