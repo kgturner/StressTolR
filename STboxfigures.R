@@ -265,7 +265,7 @@ grBatHStd[grBatHStd$RevStackymin<0,]$RevStackymin <- 0
 pdf("ST bolted mosaic_bw.pdf", useDingbats=FALSE)
 
 p1 <- ggplot(grBatHStd, aes(ymin = RevStackymin, ymax = RevStackymax, xmin=xmin, xmax=xmax, fill=factor(col)))+
-  geom_rect(colour = I("grey"), size=1)+
+  geom_rect(colour = I("black"))+
   scale_x_continuous(breaks=c(20,60,100),labels=c("Control", "Herbivory", "Nutrient"), name="Stress Treatments") +
   scale_y_continuous(name="Percent Bolted at Harvest") + theme_bw()+cscale
 p1
