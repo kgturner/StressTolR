@@ -42,11 +42,14 @@ head(m1)
 # ggplot(grdat, aes(Trt, ShootMass.g, fill=Origin))+geom_boxplot()
 ###plot in color###
 pdf("ST size box1.pdf", useDingbats=FALSE)
-p1 <- ggplot(grdat,aes(Trt, RootMass.g, fill=Origin))+geom_boxplot()+xlab("Stress Treatment")+ylab("Root mass (g)")+ theme(legend.position="none")
-p1 <- p1 + annotate('point',x = "Control", y = 5, pch=16, color="red",parse=T)+annotate('point',x = "Nutrient", y = 5, pch=16, color="red",parse=T)+
+p1 <- ggplot(grdat,aes(Trt, RootMass.g, fill=Origin))+geom_boxplot()+xlab("Stress Treatment")+
+  ylab("Root mass (g)")+ theme(legend.position="none")
+p1 <- p1 + annotate('point',x = "Control", y = 5, pch=16, color="red",parse=T)+
+  annotate('point',x = "Nutrient", y = 5, pch=16, color="red",parse=T)+
   annotate('point',x = "Herbivory", y = 5, pch=8, color="red",parse=T)+
   theme(axis.text.x=element_text(size=10))
-p2 <- ggplot(grdat, aes(Trt, LfCountH, fill=Origin))+geom_boxplot()+xlab("Stress Treatment")+ylab("Number of basal leaves")+ theme(legend.justification=c(0,1), legend.position=c(0,1))
+p2 <- ggplot(grdat, aes(Trt, LfCountH, fill=Origin))+geom_boxplot()+xlab("Stress Treatment")+
+  ylab("Number of basal leaves")+ theme(legend.justification=c(0,1), legend.position=c(0,1))
 #legend position(left/right,top/bottom)
 p2 <- p2 +  annotate('point',x = "Control", y = 30, pch=8, color="red",parse=T)+annotate('point',x = "Control", y = 32, pch=8, color="red",parse=T)
 multiplot(p1,p2, cols=2)
