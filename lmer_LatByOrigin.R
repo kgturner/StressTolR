@@ -357,6 +357,7 @@ modelL
 modelO<-lmer(bolt.bin ~ Latitude + (1|PopID/Mom), family=binomial,data=modeldata)
 anova(modelO,modelI) #test for significance of origin??? origin sig!
 model1
+interaction.plot(response = modeldata$BoltedatH, x.factor = modeldata$Latitude, trace.factor = modeldata$Origin)
 
 #lsmean estimates
 int<- -4.474240 #inv mean
@@ -380,39 +381,39 @@ pI<-exp(int)/(exp(int)+1)
 pI  
 pN 
 
-#try glm
-modelg <- glm(bolt.bin ~ Origin*Latitude, family=binomial,data=modeldata)
-modelg1 <- glm(bolt.bin ~ Origin+Latitude, family=binomial,data=modeldata)
-anova(modelg1, modelg) #'Deviance' is chisq value
-1-pchisq(7.0643, 1)
-
-modelg3<- glm(bolt.bin ~ Origin, family=binomial,data=modeldata)
-anova(modelg3,modelg1)
-1-pchisq(11.109, 1)
-modelg2<- glm(bolt.bin ~ Latitude, family=binomial,data=modeldata)
-anova(modelg2,modelg1)
-1-pchisq(39.947, 1)
-summary(modelg)
-
-#mean estimates modelg
-int<- -21.3908 #inv mean
-B<-26.6516 #Originnat estimate from model summary
-# Native
-pN<-exp(int+B)/(exp(int+B)+1)
-# Introduced (B=0)
-pI<-exp(int)/(exp(int)+1)
-pI  
-pN 
-
-#mean estimates modelL
-int<- -3.9821 #inv mean
-B<-2.8335 #Originnat estimate from model summary
-# Native
-pN<-exp(int+B)/(exp(int+B)+1)
-# Introduced (B=0)
-pI<-exp(int)/(exp(int)+1)
-pI  
-pN
+# #try glm
+# modelg <- glm(bolt.bin ~ Origin*Latitude, family=binomial,data=modeldata)
+# modelg1 <- glm(bolt.bin ~ Origin+Latitude, family=binomial,data=modeldata)
+# anova(modelg1, modelg) #'Deviance' is chisq value
+# 1-pchisq(7.0643, 1)
+# 
+# modelg3<- glm(bolt.bin ~ Origin, family=binomial,data=modeldata)
+# anova(modelg3,modelg1)
+# 1-pchisq(11.109, 1)
+# modelg2<- glm(bolt.bin ~ Latitude, family=binomial,data=modeldata)
+# anova(modelg2,modelg1)
+# 1-pchisq(39.947, 1)
+# summary(modelg)
+# 
+# #mean estimates modelg
+# int<- -21.3908 #inv mean
+# B<-26.6516 #Originnat estimate from model summary
+# # Native
+# pN<-exp(int+B)/(exp(int+B)+1)
+# # Introduced (B=0)
+# pI<-exp(int)/(exp(int)+1)
+# pI  
+# pN 
+# 
+# #mean estimates modelL
+# int<- -3.9821 #inv mean
+# B<-2.8335 #Originnat estimate from model summary
+# # Native
+# pN<-exp(int+B)/(exp(int+B)+1)
+# # Introduced (B=0)
+# pI<-exp(int)/(exp(int)+1)
+# pI  
+# pN
 
 #raw means
 summary(modeldata[modeldata$Origin=="inv",]$BoltedatH)
@@ -425,6 +426,17 @@ summary(modeldata[modeldata$Origin=="nat",]$BoltedatH)
 
 plot(modeldata[modeldata$Origin=="inv",]$Latitude, modeldata[modeldata$Origin=="inv",]$BoltedatH)
 plot(modeldata[modeldata$Origin=="nat",]$Latitude, modeldata[modeldata$Origin=="nat",]$BoltedatH)
+
+###control, bolt.bin, extra covariates###
+modeldata<-co[!is.na(co$BoltedatH),]
+modeldata$blank<-1
+modeldata$blank<-as.factor(modeldata$blank)
+modeldata$Mom<-as.factor(modeldata$Mom)
+
+model1<-lmer(bolt.bin ~ Origin * Latitude +(1|PopID/Mom), family=binomial,data=modeldata)
+modele<-lmer(bolt.bin ~ Origin * Latitude +CrownDiam.mm+(1|PopID/Mom), family=binomial,data=modeldata)
+anova(model1, modele)
+
 
 ####Nut def, Origin * Lat####
 n<-read.table("STNutsubset.txt", header=T, sep="\t", quote='"', row.names=1) #nutsubset
