@@ -190,6 +190,12 @@ model1raw
 CI.LS.poisson(model1raw)
 CI.LS.poisson(modelI)
 
+qplot(data=modeldata,Latitude, LfCount1, color = Origin)
+moddata <- ddply(modeldata, .(PopID, Origin, Latitude), summarize, popLf=length(LfCount1), poplfavg=mean(LfCount1))
+moddata
+qplot(data=moddata,Latitude, poplfavg, color = Origin) +geom_smooth(method=lm, se=FALSE)
+qplot(data=moddata[moddata$Latitude<50,],Latitude, poplfavg, color = Origin) +geom_smooth(method=lm, se=FALSE)
+
 ####Control, Origin * Lat####
 co<-read.table("STControlsubset.txt", header=T, sep="\t", quote='"', row.names=1) #controlsubset
 head(co)
@@ -320,6 +326,25 @@ pN<-exp(int+B)
 pI
 pN
 
+#tested nested range
+model1raw<-lmer(LfCountH ~ Origin *Latitude +(1|Origin/PopID/Mom), family=poisson,data=modeldata)
+model2raw<-lmer(LfCountH ~Origin *Latitude +(1|Origin/PopID), family=poisson,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
+model3raw<-lmer(LfCountH ~ Origin *Latitude +(1|Origin/blank), family=poisson,data=modeldata) # Test population effect
+anova(model2raw,model1raw) # mom not sig
+anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
+1-pchisq(60.911,1)
+modelI <-lmer(LfCountH ~ Origin +Latitude +(1|Origin/PopID/Mom), family=poisson,data=modeldata) 
+anova(modelI,model1raw)
+
+modelL<-lmer(LfCountH ~ Origin +(1|Origin/PopID/Mom), family=poisson,data=modeldata)
+anova(modelL, modelI)
+
+modelOraw<-lmer(LfCountH ~Latitude+(1|Origin/PopID/Mom), family=poisson,data=modeldata)
+anova(modelOraw,modelI) 
+
+modelIo <-lmer(LfCountH ~ Origin +Latitude +(1|PopID/Mom), family=poisson,data=modeldata) 
+anova(modelI,modelIo)
+
 ###control, boltdate, mom sig, do by hand###
 #only bolters
 modeldata<-co[!is.na(co$BoltDate),]
@@ -441,6 +466,26 @@ summary(modeldata[modeldata$Origin=="nat",]$BoltedatH)
 
 plot(modeldata[modeldata$Origin=="inv",]$Latitude, modeldata[modeldata$Origin=="inv",]$BoltedatH)
 plot(modeldata[modeldata$Origin=="nat",]$Latitude, modeldata[modeldata$Origin=="nat",]$BoltedatH)
+
+#testing nested range
+model1<-lmer(bolt.bin ~ Origin * Latitude +(1|Origin/PopID/Mom), family=binomial,data=modeldata)
+model2<-lmer(bolt.bin ~ Origin * Latitude +(1|Origin/PopID), family=binomial,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
+model3<-lmer(bolt.bin ~ Origin * Latitude +(1|Origin/blank), family=binomial,data=modeldata) # Test population effect
+anova(model2,model1) # mom sig
+anova(model3,model2) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
+1-pchisq(0.5715,1)
+modelI<-lmer(bolt.bin ~ Origin + Latitude +(1|Origin/PopID/Mom), family=binomial,data=modeldata)
+anova(modelI, model1)
+
+modelL<-lmer(bolt.bin ~ Origin + (1|Origin/PopID/Mom), family=binomial,data=modeldata)
+anova(modelL, modelI) #are lat and origin different???? sig so yes?
+modelL
+
+modelO<-lmer(bolt.bin ~ Latitude + (1|Origin/PopID/Mom), family=binomial,data=modeldata)
+anova(modelO,modelI)
+
+model1o<-lmer(bolt.bin ~ Origin * Latitude +(1|PopID/Mom), family=binomial,data=modeldata)
+anova(model1, model1o)
 
 ###control, bolt.bin, extra covariates###
 modeldata<-co[!is.na(co$BoltedatH),]
@@ -622,6 +667,37 @@ anova(modelL,modelI)
 modelI
 CI.LS.poisson(modelI)
 
+#testing nested range
+model1raw<-lmer(RootH.log ~ Origin * Latitude + (1|Origin/PopID/Mom), family=gaussian,data=modeldata)
+model2raw<-lmer(RootH.log ~ Origin * Latitude + (1|Origin/PopID), family=gaussian,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
+model3raw<-lmer(RootH.log ~ Origin * Latitude + (1|Origin/blank), family=gaussian,data=modeldata) # Test population effect
+print(anova(model2raw,model1raw), digits=22) # mom not sig
+(lambda <- (-2)*(-191.6041864411309347815 - (-191.6041784571340258481)))
+1-pchisq(1.596799e-05,1)
+anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
+1-pchisq(13.036,1)
+modelI <- lmer(RootH.log ~ Origin + Latitude + (1|Origin/PopID), family=gaussian,data=modeldata)
+anova(modelI,model2raw)
+
+modelO <- lmer(RootH.log ~ Origin +(1|Origin/PopID), family=gaussian,data=modeldata)
+anova(modelO,modelI) 
+
+modelL <- lmer(RootH.log ~ Latitude +(1|Origin/PopID), family=gaussian,data=modeldata)
+anova(modelL,modelI) 
+
+modelIo <- lmer(RootH.log ~ Origin + Latitude + (1|PopID), family=gaussian,data=modeldata)
+anova(modelI, modelIo)
+print(anova(modelI, modelIo), digits = 22)
+(lambda <- (-2)*(-192.3092150952082306503 - (-191.6328860987748043954)))
+1-pchisq(1.352658,1)
+modelIo
+modelI
+
+modelIo2 <- lmer(RootH.log ~ Origin + Latitude + (Origin|PopID), family=gaussian,data=modeldata)
+modelIo2
+anova(modelIo, modelIo2)
+anova(modelI, modelIo2)
+
 ##cut, crown
 modeldata<-cu[!is.na(cu$CrownDiam.mm),]
 modeldata$blank<-1
@@ -738,6 +814,12 @@ anova(modelg3)
 
 CI.LS.binomial(modelg1)
 
+qplot(data=modeldata,Latitude, bolt.bin, color = Origin)
+moddata <- ddply(modeldata, .(PopID, Origin, Latitude), summarize, popBolt=length(BoltedatH), popBoltavg=mean(bolt.bin))
+moddata
+qplot(data=moddata,Latitude, popBoltavg, color = Origin) +geom_smooth(method=lm, se=FALSE)
+qplot(data=moddata[moddata$Latitude<50,],Latitude, popBoltavg, color = Origin) +geom_smooth(method=lm, se=FALSE)
+
 ###cut, harvest, bolt date, mom is sig, do by hand###
 #given that it's bolted....
 modeldata<-cu[!is.na(cu$BoltDate),]
@@ -846,6 +928,15 @@ anova(modelg2,modelg1)
 
 CI.LS.poisson(modelg1)
 
+#extra covariate
+modeldata <- modeldata[!is.na(modeldata$lxw),]
+modelg1 <- glm(Death ~ Origin+Latitude, family=poisson,data=modeldata)
+modelgS <- glm(Death ~ Origin+Latitude+lxw, family=poisson,data=modeldata)
+anova(modelg1, modelgS)
+1-pchisq(2.9445, 1)
+# modelgO <- glm(Death ~ Latitude+lxw, family=poisson,data=modeldata)
+# anova(modelgS, modelgO)
+
 
 #drought, wilt, extra covariates#
 modeldata<-d[!is.na(d$Wilt),]
@@ -928,6 +1019,14 @@ anova(modelg2,modelg1)
 1-pchisq(9.0533, 1)
 
 CI.LS.poisson(modelg1)
+
+#extra covariates
+modeldata <- modeldata[!is.na(modeldata$lxw),]
+modelg1 <- glm(TotWilt ~ Origin+Latitude, family=poisson,data=modeldata)
+modelgS <- glm(TotWilt ~ Origin+Latitude+lxw, family=poisson,data=modeldata)
+anova(modelg1, modelgS)
+modelgO <- glm(TotWilt ~ Latitude+lxw, family=poisson,data=modeldata)
+anova(modelgS, modelgO)
 
 #drought, wilt
 modeldata<-d[!is.na(d$Wilt),]
