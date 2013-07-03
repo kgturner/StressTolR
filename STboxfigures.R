@@ -392,6 +392,27 @@ dev.off()
 # 
 # graph + annotate(geom="text", x=xes, y=ys, label=labs, size=2) + theme(legend.position="none")
 
+
+########drought trade-off really?##########
+# grBatH2 <- ddply(grdatB, .(Trt, Origin), summarize, totcount = length(BoltedatH))
+
+qplot(data=d, lxw, Wilt, color=Origin)
+
+d2 <- d
+d2$PopMom <- paste(d2$PopID, d2$Mom)
+d2 <- ddply(d2, .(PopMom, Origin), summarize, famMeanWilt=mean(Wilt), famMeanSize=mean(lxw), famCount=length(PopMom))
+qplot(data=d2, famMeanSize, famMeanWilt, color=Origin, xlab="Leaf size at 6 wks, family mean", ylab="Days to wilt, family mean")+
+  geom_point(position="jitter")
+summary(d2$famCount)
+
+d3 <- ddply(d, .(PopID, Origin), summarize, popMeanWilt=mean(Wilt), popMeanSize=mean(lxw), popCount=length(PopID))
+qplot(data=d3, popMeanSize, popMeanWilt, color=Origin, xlab="Leaf size at 6 wks, population mean", ylab="Days to wilt, population mean")
+summary(d2$popCount)
+
+qplot(data=d3, popMeanSize, popMeanWilt, color=Origin, xlab="Leaf size at 6 wks, population mean", ylab="Days to wilt, population mean")+
+  geom_smooth(method=lm, se=FALSE)
+
+
 #########################################
 multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   require(grid)
