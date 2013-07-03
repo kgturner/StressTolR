@@ -329,6 +329,19 @@ p1 + theme(panel.grid.minor.y=element_blank(), panel.grid.major.y=element_blank(
 
 dev.off()
 
+#######germination trial plot########
+levels(mom$Origin)[levels(mom$Origin)=="inv"] <- "Invasive"
+levels(mom$Origin)[levels(mom$Origin)=="nat"] <- "Native"
+
+# pdf("GerminationTrial_color.pdf", useDingbats=FALSE)
+png("GerminationTrial_color.png", height = 500, width = 500, pointsize = 16)
+qplot(data = mom, CollYear, GermPercent, color = Origin, 
+      geom = "jitter", xlab = "Collection year",
+      ylab = "Germination Rate (%)",
+      main = "Germination Trial")
+
+dev.off()
+
 
 # #orfill=factor(col)
 # #plotting 1,3,5 then 2,4,6 because of the levels
