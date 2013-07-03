@@ -367,7 +367,12 @@ modelL
 modelO<-lmer(bolt.bin ~ Latitude + (1|PopID/Mom), family=binomial,data=modeldata)
 anova(modelO,modelI) #test for significance of origin??? origin sig!
 model1
-interaction.plot(response = modeldata$BoltedatH, x.factor = modeldata$Latitude, trace.factor = modeldata$Origin)
+# interaction.plot(response = modeldata$BoltedatH, x.factor = modeldata$Latitude, trace.factor = modeldata$Origin)
+qplot(data=modeldata,Latitude, BoltedatH, color = Origin)
+moddata <- ddply(modeldata, .(PopID, Origin, Latitude), summarize, popBolt=length(BoltedatH), popBoltavg=mean(bolt.bin))
+moddata
+qplot(data=moddata[moddata$Latitude<50,],Latitude, popBoltavg, color = Origin) +geom_smooth(method=lm, se=FALSE)
+
 
 #lsmean estimates
 int<- -4.474240 #inv mean
