@@ -698,6 +698,15 @@ modelIo2
 anova(modelIo, modelIo2)
 anova(modelI, modelIo2)
 
+modelIo3 <- lmer(RootH.log ~ Origin + Latitude + (1|Origin) + (1|PopID), family=gaussian,data=modeldata)
+modelIo3
+
+modelIo4 <- lmer(RootH.log ~ Origin + Latitude + (1|Origin + PopID), family=gaussian,data=modeldata)
+modelIo4
+
+modelIo2o <- lmer(RootH.log ~ Latitude + (Origin|PopID), family=gaussian,data=modeldata)
+modelIo2o
+
 ##cut, crown
 modeldata<-cu[!is.na(cu$CrownDiam.mm),]
 modeldata$blank<-1
