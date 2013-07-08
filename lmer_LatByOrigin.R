@@ -595,10 +595,10 @@ anova(modelI, modelobar)
 modelL <- lmer(LfCountH ~ Origin +(Origin|PopID/Mom), family=poisson,data=modeldata)
 anova(modelL, modelI)
 
-modelOraw<-lmer(LfCountH ~ Latitude +(Origin|PopID/Mom), family=poisson,data=modeldata)
-anova(modelOraw,modelI) #test for significance of origin - origin NOT sig....!
+modelOraw<-lmer(LfCountH ~ (Origin|PopID/Mom), family=poisson,data=modeldata)
+anova(modelOraw,modelL) #test for significance of origin - origin NOT sig....!
 
-CI.LS.poisson(modelI)
+CI.LS.poisson(modelL)
 
 ##nut def, shoot##
 modeldata<-n[!is.na(n$ShootMass.g),]
