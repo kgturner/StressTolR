@@ -409,7 +409,8 @@ dev.off()
 ########drought trade-off really?##########
 # grBatH2 <- ddply(grdatB, .(Trt, Origin), summarize, totcount = length(BoltedatH))
 
-qplot(data=d, lxw, Wilt, color=Origin)
+qplot(data=d, lxw, Wilt, color=Origin) +geom_smooth(method=glm) +geom_point(position="jitter")
+qplot(data=d, LfCount1, Wilt, color=Origin) +geom_smooth(method=glm) +geom_point(position="jitter")
 
 d2 <- d
 d2$PopMom <- paste(d2$PopID, d2$Mom)
@@ -418,13 +419,21 @@ qplot(data=d2, famMeanSize, famMeanWilt, color=Origin, xlab="Leaf size at 6 wks,
   geom_point(position="jitter")
 summary(d2$famCount)
 
-d3 <- ddply(d, .(PopID, Origin), summarize, popMeanWilt=mean(Wilt), popMeanSize=mean(lxw), popCount=length(PopID))
+d3 <- ddply(d, .(PopID, Origin), summarize, popMeanWilt=mean(Wilt), popMeanLfSize=mean(lxw), popCount=length(PopID),popMeanLfCount=mean(LfCount1))
+
 qplot(data=d3, popMeanSize, popMeanWilt, color=Origin, xlab="Leaf size at 6 wks, population mean", ylab="Days to wilt, population mean")
-summary(d2$popCount)
+summary(d3$popCount)
 
-qplot(data=d3, popMeanSize, popMeanWilt, color=Origin, xlab="Leaf size at 6 wks, population mean", ylab="Days to wilt, population mean")+
-  geom_smooth(method=lm, se=FALSE)
+# qplot(data=d3, popMeanWilt, popMeanSize, color=Origin, ylab="Leaf size at 6 wks, population mean", xlab="Days to wilt, population mean")+
+#   geom_smooth(method=lm, se=FALSE)
+# qplot(data=d3, popMeanWilt, popMeanSize, color=Origin, ylab="Leaf size at 6 wks, population mean", xlab="Days to wilt, population mean")+
+#   geom_smooth()
 
+qplot(data=d3, popMeanLfSize, popMeanWilt, color=Origin, xlab="Leaf size at 6 wks, population mean", ylab="Days to wilt, population mean")+
+  geom_smooth(method=glm, se=FALSE)
+
+qplot(data=d3, popMeanLfCount, popMeanWilt, color=Origin, xlab="Leaf count at 6 wks, population mean", ylab="Days to wilt, population mean")+
+  geom_smooth(method=glm, se=FALSE)
 
 #########################################
 multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
