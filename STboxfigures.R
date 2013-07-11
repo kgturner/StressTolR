@@ -410,6 +410,8 @@ dev.off()
 # grBatH2 <- ddply(grdatB, .(Trt, Origin), summarize, totcount = length(BoltedatH))
 
 qplot(data=d, lxw, Wilt, color=Origin) +geom_smooth(method=glm) +geom_point(position="jitter")
+qplot(data=d[d$Wilt<9,], lxw, Wilt, color=Origin) +geom_smooth(method=glm) +geom_point(position="jitter")
+
 qplot(data=d, LfCount1, Wilt, color=Origin) +geom_smooth(method=glm) +geom_point(position="jitter")
 
 d2 <- d
@@ -429,7 +431,7 @@ summary(d3$popCount)
 # qplot(data=d3, popMeanWilt, popMeanSize, color=Origin, ylab="Leaf size at 6 wks, population mean", xlab="Days to wilt, population mean")+
 #   geom_smooth()
 
-qplot(data=d3, popMeanLfSize, popMeanWilt, color=Origin, xlab="Leaf size at 6 wks, population mean", ylab="Days to wilt, population mean")+
+qplot(data=d3[d3$popMeanWilt<9,], popMeanLfSize, popMeanWilt, color=Origin, xlab="Leaf size at 6 wks, population mean", ylab="Days to wilt, population mean")+
   geom_smooth(method=glm, se=FALSE)
 
 qplot(data=d3, popMeanLfCount, popMeanWilt, color=Origin, xlab="Leaf count at 6 wks, population mean", ylab="Days to wilt, population mean")+
