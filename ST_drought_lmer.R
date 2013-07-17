@@ -73,28 +73,15 @@ anova(modelgS, modelgO)
 modeldata <- merge(modeldata, comeans, all.x=TRUE)
 modeldata <- modeldata[!is.na(modeldata$CtrlPopLf),]
 
-modelobar<-lmer(Death ~ Origin * CtrlPopLf+Latitude +(Origin|PopID), family=poisson,data=modeldata)
-model1raw<-lmer(Death ~ Origin * CtrlPopLf+ Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
-anova(modelobar, model1raw)
-model2raw<-lmer(Death ~ Origin * CtrlPopLf+ Latitude +(1|PopID), family=poisson,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
-model3raw<-lmer(Death ~ Origin * CtrlPopLf+ Latitude +(1|blank), family=poisson,data=modeldata) # Test population effect
-anova(model2raw,model1raw) # mom not sig
-anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
-1-pchisq(56.023,1)
-# modelI <- lmer(Death ~ Origin * CtrlPopLf+ Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelI, model1raw)
-# 
-# modelL <- lmer(Death ~ Origin * CtrlPopLf+(1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelL, modelI)
-# 
-# modelCint <- lmer(Death ~ Origin + CtrlPopLf+(1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelL, modelCint)
-# 
-# modelC <- lmer(Death ~ Origin +(1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelCint, modelC)
-# 
-# modelOraw<-lmer(Death ~ (1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelOraw,modelC) #test for significance of origin - origin NOT sig....!
+# modelobar<-lmer(Death ~ Origin * CtrlPopLf+Latitude +(Origin|PopID), family=poisson,data=modeldata)
+# model1raw<-lmer(Death ~ Origin * CtrlPopLf+ Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
+# anova(modelobar, model1raw)
+# model2raw<-lmer(Death ~ Origin * CtrlPopLf+ Latitude +(1|PopID), family=poisson,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
+# model3raw<-lmer(Death ~ Origin * CtrlPopLf+ Latitude +(1|blank), family=poisson,data=modeldata) # Test population effect
+# anova(model2raw,model1raw) # mom not sig
+# anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
+# 1-pchisq(56.023,1)
+
 
 modelg <- glm(Death ~ Origin*CtrlPopLf*Latitude, family=poisson,data=modeldata)
 modelg1 <- glm(Death ~ Origin*CtrlPopLf+Latitude, family=poisson,data=modeldata)
@@ -108,42 +95,28 @@ modelg2<- glm(Death ~Origin +CtrlPopLf+ Latitude, family=poisson,data=modeldata)
 anova(modelg2,modelg1)
 1-pchisq(4.8599, 1)
 
-modelg4 <- glm(Death ~Origin + Latitude, family=poisson, data=modeldata)
-anova(modelg4, modelg2)
-modelg5 <- glm(Death~CtrlPopLf, family=poisson, data=modeldata)
-anova(modelg2, modelg5)
-
-qplot(data=modeldata,CtrlPopLf, Death, color = Origin)+geom_point(position="jitter")
-moddata <- ddply(modeldata, .(PopID, Origin, Latitude, CtrlPopLf), summarize, popCount=length(PopID), popDeath=mean(Death))
-qplot(data=moddata,CtrlPopLf, popDeath, color = Origin, xlab="Population mean leaf number in control",
-      ylab="Population mean days to Death in drought", main="Performance in drought vs control, leaf no.") +geom_smooth(method=glm, se=TRUE)
+# modelg4 <- glm(Death ~Origin + Latitude, family=poisson, data=modeldata)
+# anova(modelg4, modelg2)
+# modelg5 <- glm(Death~CtrlPopLf +Latitude, family=poisson, data=modeldata)
+# anova(modelg2, modelg5)
+# 
+# qplot(data=modeldata,CtrlPopLf, Death, color = Origin)+geom_point(position="jitter")
+# moddata <- ddply(modeldata, .(PopID, Origin, Latitude, CtrlPopLf), summarize, popCount=length(PopID), popDeath=mean(Death))
+# qplot(data=moddata,CtrlPopLf, popDeath, color = Origin, xlab="Population mean leaf number in control",
+#       ylab="Population mean days to Death in drought", main="Performance in drought vs control, leaf no.") +geom_smooth(method=glm, se=TRUE)
 
 #explicit trade-off using shootmass
 modeldata <- merge(modeldata, comeans, all.x=TRUE)
 modeldata <- modeldata[!is.na(modeldata$CtrlPopShoot),]
 
-modelobar<-lmer(Death ~ Origin * CtrlPopShoot*Latitude +(Origin|PopID/Mom), family=poisson,data=modeldata)
-model1raw<-lmer(Death ~ Origin * CtrlPopShoot* Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
-anova(modelobar, model1raw)
-model2raw<-lmer(Death ~ Origin * CtrlPopShoot* Latitude +(1|PopID), family=poisson,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
-model3raw<-lmer(Death ~ Origin * CtrlPopShoot* Latitude +(1|blank), family=poisson,data=modeldata) # Test population effect
-anova(model2raw,model1raw) # mom not sig
-anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
-1-pchisq(3.543,1)
-# modelI <- lmer(Death ~ Origin * CtrlPopLf+ Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelI, model1raw)
-# 
-# modelL <- lmer(Death ~ Origin * CtrlPopLf+(1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelL, modelI)
-# 
-# modelCint <- lmer(Death ~ Origin + CtrlPopLf+(1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelL, modelCint)
-# 
-# modelC <- lmer(Death ~ Origin +(1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelCint, modelC)
-# 
-# modelOraw<-lmer(Death ~ (1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelOraw,modelC) #test for significance of origin - origin NOT sig....!
+# modelobar<-lmer(Death ~ Origin * CtrlPopShoot*Latitude +(Origin|PopID/Mom), family=poisson,data=modeldata)
+# model1raw<-lmer(Death ~ Origin * CtrlPopShoot* Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
+# anova(modelobar, model1raw)
+# model2raw<-lmer(Death ~ Origin * CtrlPopShoot* Latitude +(1|PopID), family=poisson,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
+# model3raw<-lmer(Death ~ Origin * CtrlPopShoot* Latitude +(1|blank), family=poisson,data=modeldata) # Test population effect
+# anova(model2raw,model1raw) # mom not sig
+# anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
+# 1-pchisq(3.543,1)
 
 modelg <- glm(Death ~ Origin*CtrlPopShoot*Latitude, family=poisson,data=modeldata)
 modelg1 <- glm(Death ~ Origin*CtrlPopShoot+Latitude, family=poisson,data=modeldata)
@@ -161,6 +134,11 @@ modelg4 <- glm(Death ~Origin, family=poisson, data=modeldata)
 anova(modelg4, modelg2)
 modelg5 <- glm(Death~CtrlPopShoot, family=poisson, data=modeldata)
 anova(modelg5, modelg2)
+
+modelg3
+summary(modelg3)
+anova(modelg3)
+CI.LS.poisson(modelg3, conf=95)
 
 qplot(data=modeldata,CtrlPopShoot, Death, color = Origin)+geom_point(position="jitter")
 moddata <- ddply(modeldata, .(PopID, Origin, Latitude, CtrlPopShoot), summarize, popCount=length(PopID), popDeath=mean(Death))
@@ -224,28 +202,14 @@ anova(modelgS, modelgO)
 modeldata <- merge(modeldata, comeans, all.x=TRUE)
 modeldata <- modeldata[!is.na(modeldata$CtrlPopLf),]
 
-modelobar<-lmer(TotWilt ~ Origin * CtrlPopLf*Latitude +(Origin|PopID/Mom), family=poisson,data=modeldata)
-model1raw<-lmer(TotWilt ~ Origin * CtrlPopLf* Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
-anova(modelobar, model1raw)
-model2raw<-lmer(TotWilt ~ Origin * CtrlPopLf* Latitude +(1|PopID), family=poisson,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
-model3raw<-lmer(TotWilt ~ Origin * CtrlPopLf* Latitude +(1|blank), family=poisson,data=modeldata) # Test population effect
-anova(model2raw,model1raw) # mom not sig
-anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
-1-pchisq(56.023,1)
-# modelI <- lmer(TotWilt ~ Origin * CtrlPopLf+ Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelI, model1raw)
-# 
-# modelL <- lmer(TotWilt ~ Origin * CtrlPopLf+(1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelL, modelI)
-# 
-# modelCint <- lmer(TotWilt ~ Origin + CtrlPopLf+(1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelL, modelCint)
-# 
-# modelC <- lmer(TotWilt ~ Origin +(1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelCint, modelC)
-# 
-# modelOraw<-lmer(TotWilt ~ (1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelOraw,modelC) #test for significance of origin - origin NOT sig....!
+# modelobar<-lmer(TotWilt ~ Origin * CtrlPopLf*Latitude +(Origin|PopID/Mom), family=poisson,data=modeldata)
+# model1raw<-lmer(TotWilt ~ Origin * CtrlPopLf* Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
+# anova(modelobar, model1raw)
+# model2raw<-lmer(TotWilt ~ Origin * CtrlPopLf* Latitude +(1|PopID), family=poisson,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
+# model3raw<-lmer(TotWilt ~ Origin * CtrlPopLf* Latitude +(1|blank), family=poisson,data=modeldata) # Test population effect
+# anova(model2raw,model1raw) # mom not sig
+# anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
+# 1-pchisq(56.023,1)
 
 modelg <- glm(TotWilt ~ Origin*CtrlPopLf*Latitude, family=poisson,data=modeldata)
 modelg1 <- glm(TotWilt ~ Origin*CtrlPopLf+Latitude, family=poisson,data=modeldata)
@@ -269,33 +233,19 @@ moddata <- ddply(modeldata, .(PopID, Origin, Latitude, CtrlPopLf), summarize, po
 qplot(data=moddata,CtrlPopLf, popTotWilt, color = Origin, xlab="Population mean leaf number in control",
       ylab="Population mean days to TotWilt in drought", main="Performance in drought vs control, leaf no.") +geom_smooth(method=glm, se=TRUE)
 
-
+summary(modelg3)
 #explicit trade-off using shootmass
 modeldata <- merge(modeldata, comeans, all.x=TRUE)
 modeldata <- modeldata[!is.na(modeldata$CtrlPopShoot),]
 
-modelobar<-lmer(TotWilt ~ Origin * CtrlPopShoot*Latitude +(Origin|PopID/Mom), family=poisson,data=modeldata)
-model1raw<-lmer(TotWilt ~ Origin * CtrlPopShoot* Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
-anova(modelobar, model1raw)
-model2raw<-lmer(TotWilt ~ Origin * CtrlPopShoot* Latitude +(1|PopID), family=poisson,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
-model3raw<-lmer(TotWilt ~ Origin * CtrlPopShoot* Latitude +(1|blank), family=poisson,data=modeldata) # Test population effect
-anova(model2raw,model1raw) # mom not sig
-anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
-1-pchisq(56.023,1)
-# modelI <- lmer(TotWilt ~ Origin * CtrlPopLf+ Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelI, model1raw)
-# 
-# modelL <- lmer(TotWilt ~ Origin * CtrlPopLf+(1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelL, modelI)
-# 
-# modelCint <- lmer(TotWilt ~ Origin + CtrlPopLf+(1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelL, modelCint)
-# 
-# modelC <- lmer(TotWilt ~ Origin +(1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelCint, modelC)
-# 
-# modelOraw<-lmer(TotWilt ~ (1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelOraw,modelC) #test for significance of origin - origin NOT sig....!
+# modelobar<-lmer(TotWilt ~ Origin * CtrlPopShoot*Latitude +(Origin|PopID/Mom), family=poisson,data=modeldata)
+# model1raw<-lmer(TotWilt ~ Origin * CtrlPopShoot* Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
+# anova(modelobar, model1raw)
+# model2raw<-lmer(TotWilt ~ Origin * CtrlPopShoot* Latitude +(1|PopID), family=poisson,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
+# model3raw<-lmer(TotWilt ~ Origin * CtrlPopShoot* Latitude +(1|blank), family=poisson,data=modeldata) # Test population effect
+# anova(model2raw,model1raw) # mom not sig
+# anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
+# 1-pchisq(56.023,1)
 
 modelg <- glm(TotWilt ~ Origin*CtrlPopShoot*Latitude, family=poisson,data=modeldata)
 modelg1 <- glm(TotWilt ~ Origin*CtrlPopShoot+Latitude, family=poisson,data=modeldata)
@@ -319,7 +269,7 @@ moddata <- ddply(modeldata, .(PopID, Origin, Latitude, CtrlPopShoot), summarize,
 qplot(data=moddata,CtrlPopShoot, popTotWilt, color = Origin, 
       xlab="Population mean shoot mass in control treatment", 
       ylab="Population mean days to TotWilt in drought treatment", main="Performance in drought vs. control treatments") +geom_smooth(method=glm, se=TRUE)
-
+summary(modelg3)
 
 #drought, wilt
 modeldata<-d[!is.na(d$Wilt),]
@@ -362,28 +312,14 @@ CI.LS.poisson(modelg1)
 modeldata <- merge(modeldata, comeans, all.x=TRUE)
 modeldata <- modeldata[!is.na(modeldata$CtrlPopLf),]
 
-modelobar<-lmer(Wilt ~ Origin * CtrlPopLf*Latitude +(Origin|PopID), family=poisson,data=modeldata)
-model1raw<-lmer(Wilt ~ Origin * CtrlPopLf* Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
-anova(modelobar, model1raw)
-model2raw<-lmer(Wilt ~ Origin * CtrlPopLf* Latitude +(1|PopID), family=poisson,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
-model3raw<-lmer(Wilt ~ Origin * CtrlPopLf* Latitude +(1|blank), family=poisson,data=modeldata) # Test population effect
-anova(model2raw,model1raw) # mom not sig
-anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
-1-pchisq(56.023,1)
-# modelI <- lmer(Wilt ~ Origin * CtrlPopLf+ Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelI, model1raw)
-# 
-# modelL <- lmer(Wilt ~ Origin * CtrlPopLf+(1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelL, modelI)
-# 
-# modelCint <- lmer(Wilt ~ Origin + CtrlPopLf+(1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelL, modelCint)
-# 
-# modelC <- lmer(Wilt ~ Origin +(1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelCint, modelC)
-# 
-# modelOraw<-lmer(Wilt ~ (1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelOraw,modelC) #test for significance of origin - origin NOT sig....!
+# modelobar<-lmer(Wilt ~ Origin * CtrlPopLf*Latitude +(Origin|PopID), family=poisson,data=modeldata)
+# model1raw<-lmer(Wilt ~ Origin * CtrlPopLf* Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
+# anova(modelobar, model1raw)
+# model2raw<-lmer(Wilt ~ Origin * CtrlPopLf* Latitude +(1|PopID), family=poisson,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
+# model3raw<-lmer(Wilt ~ Origin * CtrlPopLf* Latitude +(1|blank), family=poisson,data=modeldata) # Test population effect
+# anova(model2raw,model1raw) # mom not sig
+# anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
+# 1-pchisq(56.023,1)
 
 modelg <- glm(Wilt ~ Origin*CtrlPopLf*Latitude, family=poisson,data=modeldata)
 modelg1 <- glm(Wilt ~ Origin*CtrlPopLf+Latitude, family=poisson,data=modeldata)
@@ -405,33 +341,23 @@ anova(modelg2, modelg5)
 qplot(data=modeldata,CtrlPopLf, Wilt, color = Origin)+geom_point(position="jitter")
 moddata <- ddply(modeldata, .(PopID, Origin, Latitude, CtrlPopLf), summarize, popCount=length(PopID), popWilt=mean(Wilt))
 qplot(data=moddata,CtrlPopLf, popWilt, color = Origin, xlab="Population mean leaf number in control",
-      ylab="Population mean days to wilt in drought", main="Performance in drought vs control, leaf no.") +geom_smooth(method=glm, se=TRUE)
+      ylab="Population mean days to wilt in drought", main="Performance in drought vs control, leaf no.")+
+  geom_smooth(method=glm, family=poisson,se=TRUE)
+summary(modelg3)
+CI.LS.poisson(modelg3)
 
 #explicit trade-off using shootmass
+modeldata <- merge(modeldata, comeans, all.x=TRUE)
 modeldata <- modeldata[!is.na(modeldata$CtrlPopShoot),]
 
-modelobar<-lmer(Wilt ~ Origin * CtrlPopShoot*Latitude +(Origin|PopID), family=poisson,data=modeldata)
-model1raw<-lmer(Wilt ~ Origin * CtrlPopShoot* Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
-anova(modelobar, model1raw)
-model2raw<-lmer(Wilt ~ Origin * CtrlPopShoot* Latitude +(1|PopID), family=poisson,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
-model3raw<-lmer(Wilt ~ Origin * CtrlPopShoot* Latitude +(1|blank), family=poisson,data=modeldata) # Test population effect
-anova(model2raw,model1raw) # mom not sig
-anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
-1-pchisq(56.023,1)
-# modelI <- lmer(Wilt ~ Origin * CtrlPopLf+ Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelI, model1raw)
-# 
-# modelL <- lmer(Wilt ~ Origin * CtrlPopLf+(1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelL, modelI)
-# 
-# modelCint <- lmer(Wilt ~ Origin + CtrlPopLf+(1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelL, modelCint)
-# 
-# modelC <- lmer(Wilt ~ Origin +(1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelCint, modelC)
-# 
-# modelOraw<-lmer(Wilt ~ (1|PopID/Mom), family=poisson,data=modeldata)
-# anova(modelOraw,modelC) #test for significance of origin - origin NOT sig....!
+# modelobar<-lmer(Wilt ~ Origin * CtrlPopShoot*Latitude +(Origin|PopID), family=poisson,data=modeldata)
+# model1raw<-lmer(Wilt ~ Origin * CtrlPopShoot* Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
+# anova(modelobar, model1raw)
+# model2raw<-lmer(Wilt ~ Origin * CtrlPopShoot* Latitude +(1|PopID), family=poisson,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
+# model3raw<-lmer(Wilt ~ Origin * CtrlPopShoot* Latitude +(1|blank), family=poisson,data=modeldata) # Test population effect
+# anova(model2raw,model1raw) # mom not sig
+# anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
+# 1-pchisq(56.023,1)
 
 modelg <- glm(Wilt ~ Origin*CtrlPopShoot*Latitude, family=poisson,data=modeldata)
 modelg1 <- glm(Wilt ~ Origin*CtrlPopShoot+Latitude, family=poisson,data=modeldata)
@@ -455,6 +381,30 @@ moddata <- ddply(modeldata, .(PopID, Origin, Latitude, CtrlPopShoot), summarize,
 qplot(data=moddata,CtrlPopShoot, popWilt, color = Origin, 
       xlab="Population mean shoot mass in control treatment", 
       ylab="Population mean days to wilt in drought treatment", main="Performance in drought vs. control treatments") +geom_smooth(method=glm, se=TRUE)
+summary(modelg3)
+
+
+qplot(data=moddata,CtrlPopShoot, popWilt, color = Origin, 
+      xlab="Population mean shoot mass in control treatment", 
+      ylab="Population mean days to wilt in drought treatment", 
+      main="Performance in drought vs. control treatments") +
+  geom_smooth(method=glm, se=TRUE)
+
+qplot(data=moddata,CtrlPopShoot, popWilt, color = Origin, 
+      xlab="Population mean shoot mass in control treatment", 
+      ylab="Population mean days to wilt in drought treatment", 
+      main="Performance in drought vs. control treatments") +
+  geom_smooth(method=glm, family=poisson, se=TRUE)
+
+qplot(data=modeldata, CtrlPopShoot, Wilt, color = Origin,
+      xlab="Population mean shoot mass in control treatment",
+      ylab="Days to wilt in drought treatment",
+      main="Performance in drought vs. control")+
+  geom_smooth(method=glm, family=poisson, se=TRUE)+
+  geom_point(position="jitter")
+
+
+
 
 #drought, wilt, extra covariates#
 #lfcount1 as size

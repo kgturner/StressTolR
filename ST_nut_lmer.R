@@ -470,14 +470,14 @@ anova(modelOraw,modelC) #test for significance of origin - origin NOT sig....!
 modeldata <- merge(modeldata, comeans, all.x=TRUE)
 modeldata <- modeldata[!is.na(modeldata$CtrlPopShoot),]
 
-modelobar<-lmer(lxwH ~ Origin * CtrlPopShoot*Latitude +(Origin|PopID/Mom), family=gaussian,data=modeldata)
-model1raw<-lmer(lxwH ~ Origin * CtrlPopShoot* Latitude + (1|PopID/Mom), family=gaussian,data=modeldata)
-anova(modelobar, model1raw)
-model2raw<-lmer(lxwH ~ Origin * CtrlPopShoot* Latitude +(1|PopID), family=gaussian,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
-model3raw<-lmer(lxwH ~ Origin * CtrlPopShoot* Latitude +(1|blank), family=gaussian,data=modeldata) # Test population effect
-anova(model2raw,model1raw) # mom not sig
-anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
-1-pchisq(3.2628,1)
+# modelobar<-lmer(lxwH ~ Origin * CtrlPopShoot*Latitude +(Origin|PopID/Mom), family=gaussian,data=modeldata)
+# model1raw<-lmer(lxwH ~ Origin * CtrlPopShoot* Latitude + (1|PopID/Mom), family=gaussian,data=modeldata)
+# anova(modelobar, model1raw)
+# model2raw<-lmer(lxwH ~ Origin * CtrlPopShoot* Latitude +(1|PopID), family=gaussian,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
+# model3raw<-lmer(lxwH ~ Origin * CtrlPopShoot* Latitude +(1|blank), family=gaussian,data=modeldata) # Test population effect
+# anova(model2raw,model1raw) # mom not sig
+# anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
+# 1-pchisq(3.2628,1)
 
 modelg <- glm(lxwH ~ Origin*CtrlPopShoot*Latitude, family=gaussian,data=modeldata)
 modelg1 <- glm(lxwH ~ Origin*CtrlPopShoot+Latitude, family=gaussian,data=modeldata)
@@ -496,9 +496,14 @@ anova(modelg4, modelg2)
 modelg5 <- glm(lxwH~CtrlPopShoot+Latitude, family=gaussian, data=modeldata)
 anova(modelg5, modelg2)
 
+modelg3.1 <- glm(lxwH ~ Origin+CtrlPopShoot, family=gaussian,data=modeldata)
+anova(modelg3.1, modelg3)
+summary(modelg3)
+summary(modelg1)
+
 qplot(data=modeldata,CtrlPopShoot, lxwH, color = Origin)+geom_point(position="jitter")
 moddata <- ddply(modeldata, .(PopID, Origin, Latitude, CtrlPopShoot), summarize, popCount=length(PopID), poplxwH=mean(lxwH))
 qplot(data=moddata,CtrlPopShoot, poplxwH, color = Origin, 
       xlab="Population mean shoot mass in control treatment", 
       ylab="Population mean lf size in nutrient treatment", main="Performance in nutrient vs. control treatments") +geom_smooth(method=glm, se=TRUE)
-
+summary(modelg3)
