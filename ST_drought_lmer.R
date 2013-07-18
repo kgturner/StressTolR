@@ -120,24 +120,25 @@ modeldata <- modeldata[!is.na(modeldata$CtrlPopShoot),]
 
 modelg <- glm(Death ~ Origin*CtrlPopShoot*Latitude, family=poisson,data=modeldata)
 modelg1 <- glm(Death ~ Origin*CtrlPopShoot+Latitude, family=poisson,data=modeldata)
-anova(modelg1, modelg) #'Deviance' is chisq value
-1-pchisq(hisq, df)
+anova(modelg1, modelg, test="LRT") 
+qchisq(pval,1,lower=FALSE)#chisq value
 
 modelg3<- glm(Death ~ Origin*CtrlPopShoot, family=poisson,data=modeldata)
-anova(modelg3,modelg1)
-1-pchisq(3.546, 1)
+anova(modelg3,modelg1, test="LRT")
+qchisq(pval,1,lower=FALSE)#chisq value
 modelg2<- glm(Death ~Origin +CtrlPopShoot, family=poisson,data=modeldata)
-anova(modelg2,modelg3)
-1-pchisq(4.8599, 1)
+anova(modelg2,modelg3, test="LRT")
+qchisq(pval,1,lower=FALSE)#chisq value
 
 modelg4 <- glm(Death ~Origin, family=poisson, data=modeldata)
-anova(modelg4, modelg2)
+anova(modelg4, modelg2, test="LRT")
 modelg5 <- glm(Death~CtrlPopShoot, family=poisson, data=modeldata)
-anova(modelg5, modelg2)
+anova(modelg5, modelg2, test="LRT")
 
 modelg3
 summary(modelg3)
-anova(modelg3)
+anova(modelg3, test="LRT")
+
 CI.LS.poisson(modelg3, conf=95)
 
 qplot(data=modeldata,CtrlPopShoot, Death, color = Origin)+geom_point(position="jitter")
@@ -178,15 +179,15 @@ pN
 #try glm
 modelg <- glm(TotWilt ~ Origin*Latitude, family=poisson,data=modeldata)
 modelg1 <- glm(TotWilt ~ Origin+Latitude, family=poisson,data=modeldata)
-anova(modelg1, modelg) #'Deviance' is chisq value
-1-pchisq(chisq, df)
+anova(modelg1, modelg, test="LRT") 
+qchisq(0.2744,1,lower=FALSE)#chisq value
 
 modelg3<- glm(TotWilt ~ Origin, family=poisson,data=modeldata)
-anova(modelg3,modelg1)
-1-pchisq(5.5154, 1)
+anova(modelg3,modelg1, test="LRT")
+qchisq(0.005593,1,lower=FALSE)#chisq value
 modelg2<- glm(TotWilt ~ Latitude, family=poisson,data=modeldata)
-anova(modelg2,modelg1)
-1-pchisq(9.0533, 1)
+anova(modelg2,modelg1, test="LRT")
+qchisq(0.2531,1,lower=FALSE)#chisq value
 
 CI.LS.poisson(modelg1)
 
@@ -296,14 +297,16 @@ anova(modelO,modelI) #test for significance of origin - origin not sig!
 #try glm
 modelg <- glm(Wilt ~ Origin*Latitude, family=poisson,data=modeldata)
 modelg1 <- glm(Wilt ~ Origin+Latitude, family=poisson,data=modeldata)
+anova(modelg1, modelg, test="LRT") 
+qchisq(0.4786,1,lower=FALSE)#chisq value
 anova(modelg1, modelg) #'Deviance' is chisq value
-1-pchisq(chisq, df)
+1-pchisq(0.50203, 1)
 
 modelg3<- glm(Wilt ~ Origin, family=poisson,data=modeldata)
-anova(modelg3,modelg1)
-1-pchisq(5.5154, 1)
+anova(modelg3,modelg1, test="LRT")
+qchisq(0.01182,1,lower=FALSE)#chisq value
 modelg2<- glm(Wilt ~ Latitude, family=poisson,data=modeldata)
-anova(modelg2,modelg1)
+anova(modelg2,modelg1, test="LRT")
 1-pchisq(9.0533, 1)
 
 CI.LS.poisson(modelg1)

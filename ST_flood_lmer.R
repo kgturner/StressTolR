@@ -48,14 +48,14 @@ anova(modelO,modelI) #test for significance of origin - origin not sig
 #try glm
 modelg <- glm(FloatDate ~ Origin*Latitude, family=poisson,data=modeldata)
 modelg1 <- glm(FloatDate ~ Origin+Latitude, family=poisson,data=modeldata)
-anova(modelg1, modelg) #'Deviance' is chisq value
-1-pchisq(chisq, df)
+anova(modelg1, modelg, test="LRT") 
+qchisq(0.0001435,1,lower=FALSE)#chisq value
 
 modelg3<- glm(FloatDate ~ Origin, family=poisson,data=modeldata)
-anova(modelg3,modelg1)
+anova(modelg3,modelg1, test="LRT")
 1-pchisq(5.5154, 1)
 modelg2<- glm(FloatDate ~ Latitude, family=poisson,data=modeldata)
-anova(modelg2,modelg1)
+anova(modelg2,modelg1, test="LRT")
 1-pchisq(9.0533, 1)
 
 CI.LS.poisson(modelg1)
@@ -158,14 +158,14 @@ anova(modelO,modelL) #test for significance of origin - origin not sig
 #try glm
 modelg <- glm(Yellow ~ Origin*Latitude, family=poisson,data=modeldata)
 modelg1 <- glm(Yellow ~ Origin+Latitude, family=poisson,data=modeldata)
-anova(modelg1, modelg) #'Deviance' is chisq value
-1-pchisq(chisq, df)
+anova(modelg1, modelg, test="LRT") 
+qchisq(0.5512,1,lower=FALSE)#chisq value
 
 modelg3<- glm(Yellow ~ Origin, family=poisson,data=modeldata)
-anova(modelg3,modelg1)
+anova(modelg3,modelg1, test="LRT")
 1-pchisq(5.5154, 1)
 modelg2<- glm(Yellow ~ Latitude, family=poisson,data=modeldata)
-anova(modelg2,modelg1)
+anova(modelg2,modelg1, test="LRT")
 1-pchisq(9.0533, 1)
 
 CI.LS.poisson(modelg3)

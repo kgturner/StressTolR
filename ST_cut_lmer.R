@@ -140,6 +140,7 @@ anova(modelOraw,modelC) #test for significance of origin - origin NOT sig....!
 #explicit trade-off using shootmass
 modeldata <- merge(modeldata, comeans, all.x=TRUE)
 modeldata <- modeldata[!is.na(modeldata$CtrlPopShoot),]
+
 modelobar<-lmer(RootH.log ~ Origin * CtrlPopShoot*Latitude +(Origin|PopID/Mom), family=gaussian,data=modeldata)
 model1raw<-lmer(RootH.log ~ Origin * CtrlPopShoot* Latitude + (1|PopID/Mom), family=gaussian,data=modeldata)
 anova(modelobar, model1raw)
@@ -151,20 +152,20 @@ anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what y
 
 modelg <- glm(RootH.log ~ Origin*CtrlPopShoot*Latitude, family=gaussian,data=modeldata)
 modelg1 <- glm(RootH.log ~ Origin*CtrlPopShoot+Latitude, family=gaussian,data=modeldata)
-anova(modelg1, modelg) #'Deviance' is chisq value
-1-pchisq(4.5369, 3)
+anova(modelg1, modelg, test="LRT") 
+qchisq(pval,1,lower=FALSE)#chisq value
 
 modelg3<- glm(RootH.log ~ Origin*CtrlPopShoot, family=gaussian,data=modeldata)
-anova(modelg3,modelg1)
-1-pchisq(5.5154, 1)
+anova(modelg3,modelg1, test="LRT")
+qchisq(pval,1,lower=FALSE)#chisq value
 modelg2<- glm(RootH.log ~Origin +CtrlPopShoot+Latitude, family=gaussian,data=modeldata)
-anova(modelg2,modelg1)
-1-pchisq(4.8599, 1)
+anova(modelg2,modelg1, test="LRT")
+qchisq(pval,1,lower=FALSE)#chisq value
 
 modelg4 <- glm(RootH.log ~Origin+Latitude, family=gaussian, data=modeldata)
-anova(modelg4, modelg2)
+anova(modelg4, modelg2, test="LRT")
 modelg5 <- glm(RootH.log~CtrlPopShoot+Latitude, family=gaussian, data=modeldata)
-anova(modelg2, modelg5)
+anova(modelg2, modelg5, test="LRT")
 # 
 # qplot(data=modeldata,CtrlPopShoot, RootH.log, color = Origin)+geom_point(position="jitter")
 # moddata <- ddply(modeldata, .(PopID, Origin, Latitude, CtrlPopShoot), summarize, popCount=length(PopID), popRootH.log=mean(RootH.log))
@@ -244,20 +245,20 @@ delOraw,modelC) #test for significance of origin - origin NOT sig....!
 # 
 modelg <- glm(CrownDiam.mm ~ Origin*CtrlPopShoot*Latitude, family=gaussian,data=modeldata)
 modelg1 <- glm(CrownDiam.mm ~ Origin*CtrlPopShoot+Latitude, family=gaussian,data=modeldata)
-anova(modelg1, modelg) #'Deviance' is chisq value
-1-pchisq(hisq, df)
+anova(modelg1, modelg, test="LRT") 
+qchisq(pval,1,lower=FALSE)#chisq value
 
 modelg3<- glm(CrownDiam.mm ~ Origin*CtrlPopShoot, family=gaussian,data=modeldata)
-anova(modelg3,modelg1)
-1-pchisq(5.5154, 1)
+anova(modelg3,modelg1, test="LRT")
+qchisq(pval,1,lower=FALSE)#chisq value
 modelg2<- glm(CrownDiam.mm ~Origin +CtrlPopShoot+Latitude, family=gaussian,data=modeldata)
-anova(modelg2,modelg1)
-1-pchisq(4.8599, 1)
+anova(modelg2,modelg1, test="LRT")
+qchisq(pval,1,lower=FALSE)#chisq value
 
 modelg4 <- glm(CrownDiam.mm ~Origin+Latitude, family=gaussian, data=modeldata)
-anova(modelg4, modelg2)
+anova(modelg4, modelg2, test="LRT")
 modelg5 <- glm(CrownDiam.mm~CtrlPopShoot+Latitude, family=gaussian, data=modeldata)
-anova(modelg2, modelg5)
+anova(modelg2, modelg5, test="LRT")
 
 # qplot(data=modeldata,CtrlPopShoot, CrownDiam.mm, color = Origin)+geom_point(position="jitter")
 # moddata <- ddply(modeldata, .(PopID, Origin, Latitude, CtrlPopShoot), summarize, popCount=length(PopID), popCrownDiam.mm=mean(CrownDiam.mm))

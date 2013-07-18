@@ -195,20 +195,20 @@ anova(model3raw,model2raw) # pop is sig. If it says there are 0 d.f. then what y
 
 modelg <- glm(ShootMass.g ~ Origin*CtrlPopShoot*Latitude, family=gaussian,data=modeldata)
 modelg1 <- glm(ShootMass.g ~ Origin*CtrlPopShoot+Latitude, family=gaussian,data=modeldata)
-anova(modelg1, modelg) #'Deviance' is chisq value
-1-pchisq(hisq, df)
+anova(modelg1, modelg, test="LRT") 
+qchisq(pval,1,lower=FALSE)#chisq value
 
 modelg3<- glm(ShootMass.g ~ Origin*CtrlPopShoot, family=gaussian,data=modeldata)
-anova(modelg3,modelg1)
-1-pchisq(5.5154, 1)
+anova(modelg3,modelg1, test="LRT")
+qchisq(pval,1,lower=FALSE)#chisq value
 modelg2<- glm(ShootMass.g ~Origin +CtrlPopShoot, family=gaussian,data=modeldata)
-anova(modelg2,modelg3)
-1-pchisq(4.8599, 1)
+anova(modelg2,modelg3, test="LRT")
+qchisq(pval,1,lower=FALSE)#chisq value
 
 modelg4 <- glm(ShootMass.g ~Origin, family=gaussian, data=modeldata)
-anova(modelg4, modelg2)
+anova(modelg4, modelg2, test="LRT")
 modelg5 <- glm(ShootMass.g~CtrlPopShoot, family=gaussian, data=modeldata)
-anova(modelg2, modelg5)
+anova(modelg2, modelg5, test="LRT")
 
 qplot(data=modeldata,CtrlPopShoot, ShootMass.g, color = Origin)+geom_point(position="jitter")
 moddata <- ddply(modeldata, .(PopID, Origin, Latitude, CtrlPopShoot), summarize, popCount=length(PopID), popShootMass.g=mean(ShootMass.g))
@@ -481,23 +481,23 @@ modeldata <- modeldata[!is.na(modeldata$CtrlPopShoot),]
 
 modelg <- glm(lxwH ~ Origin*CtrlPopShoot*Latitude, family=gaussian,data=modeldata)
 modelg1 <- glm(lxwH ~ Origin*CtrlPopShoot+Latitude, family=gaussian,data=modeldata)
-anova(modelg1, modelg) #'Deviance' is chisq value
-1-pchisq(hisq, df)
+anova(modelg1, modelg, test="LRT") 
+qchisq(pval,1,lower=FALSE)#chisq value
 
 modelg3<- glm(lxwH ~ Origin*CtrlPopShoot, family=gaussian,data=modeldata)
-anova(modelg3,modelg1)
-1-pchisq(5.5154, 1)
-modelg2<- glm(lxwH ~Origin +CtrlPopShoot+ Latitude, family=gaussian,data=modeldata)
-anova(modelg2,modelg1)
-1-pchisq(4.8599, 1)
+anova(modelg3,modelg1, test="LRT")
+qchisq(pval,1,lower=FALSE)#chisq value
+modelg2<- glm(lxwH ~Origin +CtrlPopShoot, family=gaussian,data=modeldata)
+anova(modelg2,modelg3, test="LRT")
+qchisq(pval,1,lower=FALSE)#chisq value
 
 modelg4 <- glm(lxwH ~Origin+Latitude, family=gaussian, data=modeldata)
-anova(modelg4, modelg2)
+anova(modelg4, modelg2, test="LRT")
 modelg5 <- glm(lxwH~CtrlPopShoot+Latitude, family=gaussian, data=modeldata)
-anova(modelg5, modelg2)
+anova(modelg5, modelg2, test="LRT")
 
 modelg3.1 <- glm(lxwH ~ Origin+CtrlPopShoot, family=gaussian,data=modeldata)
-anova(modelg3.1, modelg3)
+anova(modelg3.1, modelg3, test="LRT")
 summary(modelg3)
 summary(modelg1)
 
