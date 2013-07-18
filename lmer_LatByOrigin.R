@@ -2,9 +2,20 @@
 #Stress Tolerance, REML, using lme4
 #mixed effect models 
 library(lme4)
+library(lsmeans)
+library(ggplot2)
+library(plyr)
+
+# #if they make you do F tests for fixed fx
+# library(lmerTest)
+# step(fullmodel)
+# #but breaks lsmeans, and custom functions like CI.LS.poisson, or CGtrait.LR.int
+# #also chokes on complex random fx
 
 #for each normal trait, compare this general set of models
+modelobar<-lmer(trait  ~ Origin* Latitude +(Origin|PopID/Mom), family=gaussian,data=modeldata)#not inlcuded in CGtrait.LR functions
 model1<-lmer(trait  ~ Origin* Latitude +(1|PopID/Mom), family=gaussian,data=modeldata)
+anova(modelobar, model1)
 model2<-lmer(trait  ~ Origin* Latitude + (1|PopID), family=gaussian,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
 model3<-lmer(trait  ~ Origin* Latitude + (1|blank), family=gaussian,data=modeldata) # Test population effect
 anova(model2,model1) # mom is sig!

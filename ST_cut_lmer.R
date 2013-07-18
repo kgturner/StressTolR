@@ -424,12 +424,14 @@ modelg1 <- glm(bolt.bin ~ Origin+Latitude, family=binomial,data=modeldata)
 modelg2 <- glm(bolt.bin ~ Latitude, family=binomial,data=modeldata)
 modelg3 <- glm(bolt.bin ~ Origin, family=binomial,data=modeldata)
 # lrtest(modelg1, modelg) from library(epicalc)
-anova(modelg1, modelg) #'Deviance' is chisq value
-1-pchisq(14.456,1)
-anova(modelg3,modelg1)
-1-pchisq(0.0005405,1)
-anova(modelg3)
-1-pchisq(12.858,1)
+anova(modelg1, modelg, test="LRT") 
+qchisq(0.0001435,1,lower=FALSE)#chisq value
+#1-pchisq(14.45563,1)#check that you get pvalue back
+
+anova(modelg3,modelg1,test="LRT")
+qchisq(0.9815,1,lower=FALSE)#chisq value
+anova(modelg3,test="LRT")
+qchisq(0.0003361,1,lower=FALSE)#chisq value
 
 # modelg4 <- glm(bolt.bin ~ Latitude*Origin, family=binomial,data=modeldata)
 # modelg5 <- glm(bolt.bin ~ Latitude+Origin, family=binomial,data=modeldata)

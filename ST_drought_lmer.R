@@ -49,15 +49,15 @@ anova(modelO,modelI) #test for significance of origin - origin not sig!
 #try glm
 modelg <- glm(Death ~ Origin*Latitude, family=poisson,data=modeldata)
 modelg1 <- glm(Death ~ Origin+Latitude, family=poisson,data=modeldata)
-anova(modelg1, modelg) #'Deviance' is chisq value
-1-pchisq(chisq, df)
+anova(modelg1, modelg, test="LRT") 
+qchisq(0.6874,1,lower=FALSE)#chisq value
 
 modelg3<- glm(Death ~ Origin, family=poisson,data=modeldata)
-anova(modelg3,modelg1)
-1-pchisq(5.5154, 1)
+anova(modelg3,modelg1, test="LRT")
+qchisq(0.0004164,1,lower=FALSE)#chisq value
 modelg2<- glm(Death ~ Latitude, family=poisson,data=modeldata)
-anova(modelg2,modelg1)
-1-pchisq(9.0533, 1)
+anova(modelg2,modelg1, test="LRT")
+qchisq(0.1018,1,lower=FALSE)#chisq value
 
 CI.LS.poisson(modelg1)
 
