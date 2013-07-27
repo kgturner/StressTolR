@@ -42,7 +42,7 @@ head(m1)
 # ggplot(grdat, aes(Trt, ShootMass.g, fill=Origin))+geom_boxplot()
 ###plot in color###
 # pdf("ST size box_color.pdf", useDingbats=FALSE)
-png("STsizebox_color.png",width=600, height = 600, pointsize = 16)
+png("STsizebox_color.png",width=800, height = 600, pointsize = 16)
 p1 <- ggplot(grdat,aes(Trt, RootMass.g, fill=Origin))+
   geom_boxplot()+
   xlab("Stress Treatment")+ylab("Root mass (g)")+ 
@@ -56,8 +56,11 @@ p1 <- p1  + annotate('point',x = "Control", y = 5, pch=16, color="red",parse=T, 
 p2 <- ggplot(grdat, aes(Trt, LfCountH, fill=Origin))+geom_boxplot()+xlab("Stress Treatment")+
   ylab("Number of basal leaves")+ theme(legend.justification=c(0,1), legend.position=c(0,1))
 #legend position(left/right,top/bottom)
-p2 <- p2 +  annotate('point',x = "Control", y = 30, pch=8, color="red",parse=T, size=4)+
-  annotate('point',x = "Control", y = 32, pch=8, color="red",parse=T, size=4)+
+
+p2 <- p2 +  annotate('point',x = "Control", y = 36, pch=8, color="red",parse=T, size=4)+
+  annotate('point',x = "Control", y = 38, pch=8, color="red",parse=T, size=4)+
+  annotate('point',x = "Control", y = 40, pch=8, color="red",parse=T, size=4)+
+  annotate('point',x = "Herbivory", y = 40, pch=8, color="red",parse=T, size=4)+
   theme(axis.title.x = element_text(size=15, face="bold", vjust=-0.4), 
         axis.title.y = element_text(size=15, face="bold"),axis.text.x = element_text(size=12 ))
 
@@ -87,12 +90,15 @@ p2 <- ggplot(grdat, aes(Trt, LfCountH, fill=Origin))+ theme_bw()+
   geom_boxplot()+
   xlab("Stress Treatment")+ylab("Number of basal leaves")+ 
   theme(legend.justification=c(0,1), legend.position=c(0,1),
-        legend.title = element_text(size=14, face="bold"),legend.text = element_text(size = 13))+
+        legend.title = element_text(size=14, face="bold"),
+        legend.text = element_text(size = 13))+
   scale_fill_manual(values=c("grey51","grey84"))
 #legend position(left/right,top/bottom)
 # 
-p2 <- p2 +  annotate('point',x = "Control", y = 30, pch=8, color="black",parse=T, size=4)+
-  annotate('point',x = "Control", y = 32, pch=8, color="black",parse=T, size=4)+
+p2 <- p2 +  annotate('point',x = "Control", y = 36, pch=8, color="black",parse=T, size=4)+
+  annotate('point',x = "Control", y = 38, pch=8, color="black",parse=T, size=4)+
+  annotate('point',x = "Control", y = 40, pch=8, color="black",parse=T, size=4)+
+  annotate('point',x = "Herbivory", y = 40, pch=8, color="black",parse=T, size=4)+
   theme(axis.title.x = element_text(size=15, face="bold", vjust=-0.4), 
         axis.title.y = element_text(size=15, face="bold"),axis.text.x = element_text(size=12 ))
 
@@ -311,7 +317,7 @@ grBatHStd$RevStackymin <- grBatHStd$RevStackymax-grBatHStd$ymax
 grBatHStd[grBatHStd$RevStackymin<0,]$RevStackymin <- 0
 
 # pdf("ST bolted mosaic_color.pdf", useDingbats=FALSE)
-png("STboltedmosaic_color.png",width=600, height = 600, pointsize = 16)
+png("STboltedmosaic_color.png",width=800, height = 600, pointsize = 16)
 
 p1 <- ggplot(grBatHStd, aes(ymin = RevStackymin, ymax = RevStackymax, xmin=xmin, xmax=xmax, fill=factor(col)))+
   geom_rect(colour = I("black"))+
