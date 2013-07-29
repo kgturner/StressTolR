@@ -143,6 +143,8 @@ CI.LS.poisson(modelg3, conf=95)
 
 qplot(data=modeldata,CtrlPopShoot, Death, color = Origin)+geom_point(position="jitter")
 moddata <- ddply(modeldata, .(PopID, Origin, Latitude, CtrlPopShoot), summarize, popCount=length(PopID), popDeath=mean(Death))
+
+png("STdr_deathtradeoff_color.png",width=800, height = 600, pointsize = 16)
 qplot(data=moddata,CtrlPopShoot, popDeath, color = Origin, 
       xlab="Population mean shoot mass in control treatment", 
       ylab="Population mean days to Death in drought treatment", main="Performance in drought vs. control treatments") +geom_smooth(method=glm, se=TRUE)
@@ -369,7 +371,7 @@ anova(modelg1, modelg) #'Deviance' is chisq value
 
 modelg3<- glm(Wilt ~ Origin*CtrlPopShoot, family=poisson,data=modeldata)
 anova(modelg3,modelg1)
-1-pchisq(5.5154, 1)
+1-pchisq(3.3075, 1)
 modelg2<- glm(Wilt ~Origin +CtrlPopShoot, family=poisson,data=modeldata)
 anova(modelg2,modelg3)
 1-pchisq(4.8599, 1)
@@ -381,24 +383,19 @@ anova(modelg2, modelg5)
 
 qplot(data=modeldata,CtrlPopShoot, Wilt, color = Origin)+geom_point(position="jitter")
 moddata <- ddply(modeldata, .(PopID, Origin, Latitude, CtrlPopShoot), summarize, popCount=length(PopID), popWilt=mean(Wilt))
-qplot(data=moddata,CtrlPopShoot, popWilt, color = Origin, 
-      xlab="Population mean shoot mass in control treatment", 
-      ylab="Population mean days to wilt in drought treatment", main="Performance in drought vs. control treatments") +geom_smooth(method=glm, se=TRUE)
-summary(modelg3)
 
+#popmeans
+png("STdr_wilttradeoff_color.png",width=800, height = 600, pointsize = 16)
 
 qplot(data=moddata,CtrlPopShoot, popWilt, color = Origin, 
       xlab="Population mean shoot mass in control treatment", 
       ylab="Population mean days to wilt in drought treatment", 
       main="Performance in drought vs. control treatments") +
   geom_smooth(method=glm, se=TRUE)
+# family=poisson
+dev.off()
 
-qplot(data=moddata,CtrlPopShoot, popWilt, color = Origin, 
-      xlab="Population mean shoot mass in control treatment", 
-      ylab="Population mean days to wilt in drought treatment", 
-      main="Performance in drought vs. control treatments") +
-  geom_smooth(method=glm, family=poisson, se=TRUE)
-
+#all data
 qplot(data=modeldata, CtrlPopShoot, Wilt, color = Origin,
       xlab="Population mean shoot mass in control treatment",
       ylab="Days to wilt in drought treatment",
