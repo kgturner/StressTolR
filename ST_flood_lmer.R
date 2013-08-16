@@ -328,11 +328,11 @@ modelOraw<-lmer(Death ~ Latitude+(1|PopID/Mom), family=poisson,data=modeldata)
 anova(modelOraw,modelC) #test for significance of origin - origin NOT sig....!
 
 # modelg <- glm(Death ~ Origin*CtrlPopShoot*Latitude, family=poisson,data=modeldata)
-# modelg1 <- glm(Death ~ Origin*CtrlPopShoot+Latitude, family=poisson,data=modeldata)
+modelg1 <- glm(Death ~ Origin*CtrlPopShoot+Latitude, family=poisson,data=modeldata)
 # anova(modelg1, modelg) #'Deviance' is chisq value
 # 1-pchisq(hisq, df)
 # 
-modelg3<- glm(Death ~ Origin*CtrlPopShoot, family=poisson,data=modeldata)
+# modelg3<- glm(Death ~ Origin*CtrlPopShoot, family=poisson,data=modeldata)
 # anova(modelg3,modelg1)
 # 1-pchisq(5.5154, 1)
 # modelg2<- glm(Death ~Origin +CtrlPopShoot, family=poisson,data=modeldata)
@@ -345,7 +345,7 @@ modelg3<- glm(Death ~ Origin*CtrlPopShoot, family=poisson,data=modeldata)
 # anova(modelg2, modelg5)
 
 summary(modelI)
-summary(modelg3)
+# summary(modelg1)
 
 qplot(data=modeldata,CtrlPopShoot, Death, color = Origin)+geom_point(position="jitter")
 moddata <- ddply(modeldata, .(PopID, Origin, Latitude, CtrlPopShoot), summarize, popCount=length(PopID), popDeath=mean(Death))

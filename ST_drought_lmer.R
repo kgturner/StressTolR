@@ -10,7 +10,7 @@ library(plyr)
 co<-read.table("STControlsubset.txt", header=T, sep="\t", quote='"', row.names=1) #controlsubset
 se <- function(x) sqrt(var(x)/length(x))
 comeans<- ddply(co, .(PopID, Origin, Latitude), summarize, CtrlPopCount=length(PopID), CtrlPopLf=mean(LfCountH), CtrlPopLfSE=se(LfCountH),
-                CtrlPopShoot=mean(ShootMass.g), CtrlPopShootSE=se(ShootMass.g))
+                CtrlPopShoot=mean(ShootMass.g, na.rm=TRUE), CtrlPopShootSE=se(ShootMass.g))
 
 ####Drought, Origin * Lat####
 d<-read.table("STDroughtsubset.txt", header=T, sep="\t", quote='"', row.names=1) #droughtsubset
@@ -150,7 +150,36 @@ qplot(data=moddata,CtrlPopShoot, popDeath, color = Origin,
       ylab="Population mean days to Death in drought treatment", main="Performance in drought vs. control treatments") +geom_smooth(method=glm, se=TRUE)
 dev.off()
 
-#drought, total wilt
+#remove inv outlier - largest pop in ctrl - US021
+moddata <- moddata[moddata$PopID!="US021",]
+qplot(data=moddata,CtrlPopShoot, popDeath, color = Origin, 
+      xlab="Population mean shoot mass in control treatment", 
+      ylab="Population mean days to Death in drought treatment", main="Performance in drought vs. control treatments") +geom_smooth(method=glm, se=TRUE)
+
+modeldata <- modeldata[modeldata$PopID!="US021",]
+modelg <- glm(Death ~ Origin*CtrlPopShoot*Latitude, family=poisson,data=modeldata)
+modelg1 <- glm(Death ~ Origin*CtrlPopShoot+Latitude, family=poisson,data=modeldata)
+anova(modelg1, modelg, test="LRT") 
+qchisq(pval,1,lower=FALSE)#chisq value
+
+modelg3<- glm(Death ~ Origin*CtrlPopShoot, family=poisson,data=modeldata)
+anova(modelg3,modelg1, test="LRT")
+qchisq(pval,1,lower=FALSE)#chisq value
+modelg2<- glm(Death ~Origin +CtrlPopShoot, family=poisson,data=modeldata)
+anova(modelg2,modelg3, test="LRT")
+qchisq(pval,1,lower=FALSE)#chisq value
+
+modelg4 <- glm(Death ~Origin, family=poisson, data=modeldata)
+anova(modelg4, modelg2, test="LRT")
+modelg5 <- glm(Death~CtrlPopShoot, family=poisson, data=modeldata)
+anova(modelg5, modelg2, test="LRT")
+
+modelg3
+summary(modelg3)
+anova(modelg3, test="LRT")
+
+
+###drought, total wilt
 modeldata<-d[!is.na(d$TotWilt),]
 modeldata$blank<-1
 modeldata$blank<-as.factor(modeldata$blank)
@@ -280,6 +309,30 @@ dev.off()
 summary(modelg3)
 summary(modelg1)
 
+#remove inv outlier, largest inv pop US021
+moddata <- moddata[moddata$PopID!="US021",]
+qplot(data=moddata,CtrlPopShoot, popTotWilt, color = Origin, 
+      xlab="Population mean shoot mass in control treatment", 
+      ylab="Population mean days to TotWilt in drought treatment", main="Performance in drought vs. control treatments") +geom_smooth(method=glm, se=TRUE)
+
+modeldata <- modeldata[modeldata$PopID!="US021",]
+modelg <- glm(TotWilt ~ Origin*CtrlPopShoot*Latitude, family=poisson,data=modeldata)
+modelg1 <- glm(TotWilt ~ Origin*CtrlPopShoot+Latitude, family=poisson,data=modeldata)
+anova(modelg1, modelg, test="LRT") #'Deviance' is chisq value
+1-pchisq(3.2808, 3)
+
+modelg3<- glm(TotWilt ~ Origin*CtrlPopShoot, family=poisson,data=modeldata)
+anova(modelg3,modelg1, test="LRT")
+1-pchisq(5.5154, 1)
+modelg2<- glm(TotWilt ~Origin +CtrlPopShoot+Latitude, family=poisson,data=modeldata)
+anova(modelg2,modelg1, test="LRT")
+1-pchisq(4.8599, 1)
+
+modelg4 <- glm(TotWilt ~Origin+Latitude, family=poisson, data=modeldata)
+anova(modelg4, modelg2, test="LRT")
+modelg5 <- glm(TotWilt~Latitude, family=poisson, data=modeldata)
+anova(modelg5, modelg4, test="LRT")
+
 ###drought, wilt
 modeldata<-d[!is.na(d$Wilt),]
 modeldata$blank<-1
@@ -385,15 +438,14 @@ anova(modelg2,modelg3, test="LRT")
 modelg4 <- glm(Wilt ~Origin, family=poisson, data=modeldata)
 anova(modelg4, modelg2, test="LRT")
 modelg5 <- glm(Wilt~CtrlPopShoot, family=poisson, data=modeldata)
-anova(modelg2, modelg5, test="LRT")
+anova(modelg5, modelg2, test="LRT")
 
 summary(modelg3)
 
 qplot(data=modeldata,CtrlPopShoot, Wilt, color = Origin)+geom_point(position="jitter")
 moddata <- ddply(modeldata, .(PopID, Origin, Latitude, CtrlPopShoot), summarize, popCount=length(PopID), popWilt=mean(Wilt))
 
-#popmeans
-png("STdr_wilttradeoff_color.png",width=800, height = 600, pointsize = 16)
+png("ST_performance_drwilt_shoot.png",width=800, height = 600, pointsize = 16)
 
 qplot(data=moddata,CtrlPopShoot, popWilt, color = Origin, 
       xlab="Population mean shoot mass in control treatment", 
@@ -411,8 +463,96 @@ qplot(data=modeldata, CtrlPopShoot, Wilt, color = Origin,
   geom_smooth(method=glm, family=poisson, se=TRUE)+
   geom_point(position="jitter")
 
+#take out outlier inv - biggest invasive
+moddata <- moddata[moddata$PopID!="US021",]
 
+png("ST_performance_drwilt_shoot_Outlierremoved.png",width=800, height = 600, pointsize = 16)
+qplot(data=moddata,CtrlPopShoot, popWilt, color = Origin, 
+      xlab="Population mean shoot mass in control treatment", 
+      ylab="Population mean days to wilt in drought treatment", 
+      main="Performance in drought vs. control treatments") +
+  geom_smooth(method=glm, se=TRUE)
+dev.off()
 
+modeldata <- modeldata[modeldata$PopID!="US021",]
+
+modelg <- glm(Wilt ~ Origin*CtrlPopShoot*Latitude, family=poisson,data=modeldata)
+modelg1 <- glm(Wilt ~ Origin*CtrlPopShoot+Latitude, family=poisson,data=modeldata)
+anova(modelg1, modelg, test="LRT") #'Deviance' is chisq value
+1-pchisq(hisq, df)
+
+modelg3<- glm(Wilt ~ Origin*CtrlPopShoot, family=poisson,data=modeldata)
+anova(modelg3,modelg1, test="LRT")
+1-pchisq(3.3075, 1)
+modelg2<- glm(Wilt ~Origin +CtrlPopShoot, family=poisson,data=modeldata)
+anova(modelg2,modelg3, test="LRT")
+1-pchisq(4.8599, 1)
+
+modelg4 <- glm(Wilt ~Origin, family=poisson, data=modeldata)
+anova(modelg4, modelg2, test="LRT")
+modelg5 <- glm(Wilt~CtrlPopShoot, family=poisson, data=modeldata)
+anova(modelg2, modelg5, test="LRT")
+
+summary(modelg3)
+
+# #take out outlier inv - most tolerant invasive
+# moddata <- moddata[moddata$PopID!="US026",]
+# qplot(data=moddata,CtrlPopShoot, popWilt, color = Origin, 
+#       xlab="Population mean shoot mass in control treatment", 
+#       ylab="Population mean days to wilt in drought treatment", 
+#       main="Performance in drought vs. control treatments") +
+#   geom_smooth(method=glm, se=TRUE)
+# 
+# modeldata <- modeldata[modeldata$PopID!="US026",]
+# 
+# modelg <- glm(Wilt ~ Origin*CtrlPopShoot*Latitude, family=poisson,data=modeldata)
+# modelg1 <- glm(Wilt ~ Origin*CtrlPopShoot+Latitude, family=poisson,data=modeldata)
+# anova(modelg1, modelg, test="LRT") #'Deviance' is chisq value
+# 1-pchisq(hisq, df)
+# 
+# modelg3<- glm(Wilt ~ Origin*CtrlPopShoot, family=poisson,data=modeldata)
+# anova(modelg3,modelg1, test="LRT")
+# 1-pchisq(3.3075, 1)
+# modelg2<- glm(Wilt ~Origin +CtrlPopShoot, family=poisson,data=modeldata)
+# anova(modelg2,modelg3, test="LRT")
+# 1-pchisq(4.8599, 1)
+# 
+# modelg4 <- glm(Wilt ~Origin, family=poisson, data=modeldata)
+# anova(modelg4, modelg2, test="LRT")
+# anova(modelg4, test="LRT")
+# modelg5 <- glm(Wilt~CtrlPopShoot, family=poisson, data=modeldata)
+# anova(modelg5, modelg2, test="LRT")
+# 
+# summary(modelg3)
+# 
+# #take out outlier nat/over all most tolerant - TR003
+# moddata <- moddata[moddata$PopID!="TR003",]
+# qplot(data=moddata,CtrlPopShoot, popWilt, color = Origin, 
+#       xlab="Population mean shoot mass in control treatment", 
+#       ylab="Population mean days to wilt in drought treatment", 
+#       main="Performance in drought vs. control treatments") +
+#   geom_smooth(method=glm, se=TRUE)
+# 
+# modeldata <- modeldata[modeldata$PopID!="TR003",]
+# 
+# modelg <- glm(Wilt ~ Origin*CtrlPopShoot*Latitude, family=poisson,data=modeldata)
+# modelg1 <- glm(Wilt ~ Origin*CtrlPopShoot+Latitude, family=poisson,data=modeldata)
+# anova(modelg1, modelg, test="LRT") #'Deviance' is chisq value
+# 1-pchisq(hisq, df)
+# 
+# modelg3<- glm(Wilt ~ Origin*CtrlPopShoot, family=poisson,data=modeldata)
+# anova(modelg3,modelg1, test="LRT")
+# 1-pchisq(3.3075, 1)
+# modelg2<- glm(Wilt ~Origin +CtrlPopShoot, family=poisson,data=modeldata)
+# anova(modelg2,modelg3, test="LRT")
+# 1-pchisq(4.8599, 1)
+# 
+# modelg4 <- glm(Wilt ~Origin, family=poisson, data=modeldata)
+# anova(modelg4, modelg2, test="LRT")
+# modelg5 <- glm(Wilt~CtrlPopShoot, family=poisson, data=modeldata)
+# anova(modelg5, modelg2, test="LRT")
+# 
+# summary(modelg3)
 
 #drought, wilt, extra covariates#
 #lfcount1 as size
