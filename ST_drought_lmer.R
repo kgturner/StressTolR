@@ -333,6 +333,30 @@ anova(modelg4, modelg2, test="LRT")
 modelg5 <- glm(TotWilt~Latitude, family=poisson, data=modeldata)
 anova(modelg5, modelg4, test="LRT")
 
+#remove inv outlier, largest inv pop US021
+moddata <- moddata[moddata$PopID!="US021",]
+qplot(data=moddata,CtrlPopShoot, popTotWilt, color = Origin, 
+      xlab="Population mean shoot mass in control treatment", 
+      ylab="Population mean days to TotWilt in drought treatment", main="Performance in drought vs. control treatments") +geom_smooth(method=glm, se=TRUE)
+
+modeldata <- modeldata[modeldata$PopID!="US021",]
+modelg <- glm(TotWilt ~ Origin*CtrlPopShoot*Latitude, family=poisson,data=modeldata)
+modelg1 <- glm(TotWilt ~ Origin*CtrlPopShoot+Latitude, family=poisson,data=modeldata)
+anova(modelg1, modelg, test="LRT") #'Deviance' is chisq value
+1-pchisq(3.2808, 3)
+
+modelg3<- glm(TotWilt ~ Origin*CtrlPopShoot, family=poisson,data=modeldata)
+anova(modelg3,modelg1, test="LRT")
+1-pchisq(5.5154, 1)
+modelg2<- glm(TotWilt ~Origin +CtrlPopShoot+Latitude, family=poisson,data=modeldata)
+anova(modelg2,modelg1, test="LRT")
+1-pchisq(4.8599, 1)
+
+modelg4 <- glm(TotWilt ~Origin+Latitude, family=poisson, data=modeldata)
+anova(modelg4, modelg2, test="LRT")
+modelg5 <- glm(TotWilt~Latitude, family=poisson, data=modeldata)
+anova(modelg5, modelg4, test="LRT")
+
 ###drought, wilt
 modeldata<-d[!is.na(d$Wilt),]
 modeldata$blank<-1
