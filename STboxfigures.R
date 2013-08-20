@@ -40,6 +40,7 @@ head(m1)
 # ggplot(grdat, aes(Trt, CrownDiam.mm, fill=Origin))+geom_boxplot()
 # ggplot(grdat, aes(Trt, lxwH, fill=Origin))+geom_boxplot()
 # ggplot(grdat, aes(Trt, ShootMass.g, fill=Origin))+geom_boxplot()
+
 ###plot in color###
 # pdf("ST size box_color.pdf", useDingbats=FALSE)
 png("STsizebox_color.png",width=800, height = 600, pointsize = 16)
@@ -413,35 +414,86 @@ dev.off()
 
 
 ########drought trade-off really?##########
-# grBatH2 <- ddply(grdatB, .(Trt, Origin), summarize, totcount = length(BoltedatH))
+# # grBatH2 <- ddply(grdatB, .(Trt, Origin), summarize, totcount = length(BoltedatH))
+# 
+# qplot(data=d, lxw, Wilt, color=Origin) +geom_smooth(method=glm) +geom_point(position="jitter")
+# qplot(data=d[d$Wilt<9,], lxw, Wilt, color=Origin) +geom_smooth(method=glm) +geom_point(position="jitter")
+# 
+# qplot(data=d, LfCount1, Wilt, color=Origin) +geom_smooth(method=glm) +geom_point(position="jitter")
+# 
+# d2 <- d
+# d2$PopMom <- paste(d2$PopID, d2$Mom)
+# d2 <- ddply(d2, .(PopMom, Origin), summarize, famMeanWilt=mean(Wilt), famMeanSize=mean(lxw), famCount=length(PopMom))
+# qplot(data=d2, famMeanSize, famMeanWilt, color=Origin, xlab="Leaf size at 6 wks, family mean", ylab="Days to wilt, family mean")+
+#   geom_point(position="jitter")
+# summary(d2$famCount)
+# 
+# d3 <- ddply(d, .(PopID, Origin), summarize, popMeanWilt=mean(Wilt), popMeanLfSize=mean(lxw), popCount=length(PopID),popMeanLfCount=mean(LfCount1))
+# 
+# qplot(data=d3, popMeanSize, popMeanWilt, color=Origin, xlab="Leaf size at 6 wks, population mean", ylab="Days to wilt, population mean")
+# summary(d3$popCount)
+# 
+# # qplot(data=d3, popMeanWilt, popMeanSize, color=Origin, ylab="Leaf size at 6 wks, population mean", xlab="Days to wilt, population mean")+
+# #   geom_smooth(method=lm, se=FALSE)
+# # qplot(data=d3, popMeanWilt, popMeanSize, color=Origin, ylab="Leaf size at 6 wks, population mean", xlab="Days to wilt, population mean")+
+# #   geom_smooth()
+# 
+# qplot(data=d3[d3$popMeanWilt<9,], popMeanLfSize, popMeanWilt, color=Origin, xlab="Leaf size at 6 wks, population mean", ylab="Days to wilt, population mean")+
+#   geom_smooth(method=glm, se=FALSE)
+# 
+# qplot(data=d3, popMeanLfCount, popMeanWilt, color=Origin, xlab="Leaf count at 6 wks, population mean", ylab="Days to wilt, population mean")+
+#   geom_smooth(method=glm, se=FALSE)
 
-qplot(data=d, lxw, Wilt, color=Origin) +geom_smooth(method=glm) +geom_point(position="jitter")
-qplot(data=d[d$Wilt<9,], lxw, Wilt, color=Origin) +geom_smooth(method=glm) +geom_point(position="jitter")
+###########trade-off figure###########
+stdrwiltTO <- moddata #for making figures
+blah <- stdrwiltTO
+stdrwiltTO <- blah
+levels(stdrwiltTO$Origin)[levels(stdrwiltTO$Origin)=="inv"] <- "Invasive"
+levels(stdrwiltTO$Origin)[levels(stdrwiltTO$Origin)=="nat"] <- "Native"
 
-qplot(data=d, LfCount1, Wilt, color=Origin) +geom_smooth(method=glm) +geom_point(position="jitter")
 
-d2 <- d
-d2$PopMom <- paste(d2$PopID, d2$Mom)
-d2 <- ddply(d2, .(PopMom, Origin), summarize, famMeanWilt=mean(Wilt), famMeanSize=mean(lxw), famCount=length(PopMom))
-qplot(data=d2, famMeanSize, famMeanWilt, color=Origin, xlab="Leaf size at 6 wks, family mean", ylab="Days to wilt, family mean")+
-  geom_point(position="jitter")
-summary(d2$famCount)
 
-d3 <- ddply(d, .(PopID, Origin), summarize, popMeanWilt=mean(Wilt), popMeanLfSize=mean(lxw), popCount=length(PopID),popMeanLfCount=mean(LfCount1))
+# moddata <- ddply(modeldata, .(PopID, Origin, Latitude, CtrlPopShoot), summarize, popCount=length(PopID), popDeath=mean(Death))
+# stfldeathTO <- moddata #for figure making
+# qplot(data=moddata,CtrlPopShoot, popDeath, color = Origin, 
+#       xlab="Population mean shoot mass in control treatment", 
+#       ylab="Population mean days to Death in flood treatment", main="Performance in flood vs. control treatments") +geom_smooth(method=glm, se=TRUE)
 
-qplot(data=d3, popMeanSize, popMeanWilt, color=Origin, xlab="Leaf size at 6 wks, population mean", ylab="Days to wilt, population mean")
-summary(d3$popCount)
+# pdf("ST trade0ff_color.pdf", useDingbats=FALSE)
+png("STtradeoff_color.png",width=800, height = 600, pointsize = 16)
 
-# qplot(data=d3, popMeanWilt, popMeanSize, color=Origin, ylab="Leaf size at 6 wks, population mean", xlab="Days to wilt, population mean")+
-#   geom_smooth(method=lm, se=FALSE)
-# qplot(data=d3, popMeanWilt, popMeanSize, color=Origin, ylab="Leaf size at 6 wks, population mean", xlab="Days to wilt, population mean")+
-#   geom_smooth()
+p1 <- ggplot(stdrwiltTO,aes(CtrlPopShoot, popWilt, color=Origin))+ geom_point()+
+  geom_smooth(method=glm, se=TRUE)+
+  xlab("Population mean shoot mass (g) in control treatment")+
+  ylab("Population mean days to wilt in drought treatment")+ 
+  #title("Performance in drought vs. control treatments")+
+  theme(legend.justification=c(1,1), legend.position=c(1,1))
+ 
+p1 <- p1 +  annotate('point',x = 1.46, y = 2, pch=8, color="red",parse=T,size=3) +
+  annotate('point',x = 1.54, y = 2, pch=8, color="red",parse=T,size=3) +
+  annotate(geom="text", x=1.5, y=2.3, label="Origin", size=5) +
+  annotate(geom="text", x=1.5, y=1.7, label="Origin*Control mass", size=5) +
+  annotate('point',x = 1.5, y = 1.4, pch=8, color="red",parse=T,size=3) 
 
-qplot(data=d3[d3$popMeanWilt<9,], popMeanLfSize, popMeanWilt, color=Origin, xlab="Leaf size at 6 wks, population mean", ylab="Days to wilt, population mean")+
-  geom_smooth(method=glm, se=FALSE)
+p2 <- ggplot(stfldeathTO, aes(CtrlPopShoot, popDeath, color=Origin))+geom_point()+
+  geom_smooth(method=glm, se=TRUE)+
+  xlab("Population mean shoot mass (g) in control treatment")+
+  ylab("Population mean days to death in flood treatment")+  
+  theme(legend.position="none")
+#legend position(left/right,top/bottom)
 
-qplot(data=d3, popMeanLfCount, popMeanWilt, color=Origin, xlab="Leaf count at 6 wks, population mean", ylab="Days to wilt, population mean")+
-  geom_smooth(method=glm, se=FALSE)
+p2 <- p2 +  annotate(geom="text", x=1.5, y=26, label="Origin", size=5)+
+    annotate(geom="text", x=1.5, y=25, label="n.s.",fontface="italic", size=5)+
+    annotate(geom="text", x=1.5, y=24, label="Origin*Control mass",size=5)+ 
+  annotate('point',x = 1.46, y = 23, pch=8, color="red",parse=T, size=4)+
+  annotate('point',x = 1.54, y = 23, pch=8, color="red",parse=T, size=4) #+
+#   theme(axis.title.x = element_text(size=15, face="bold", vjust=-0.4), 
+#         axis.title.y = element_text(size=15, face="bold"),axis.text.x = element_text(size=12 ))
+
+
+
+multiplot(p1,p2, cols=2)
+dev.off()
 
 #########################################
 multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {

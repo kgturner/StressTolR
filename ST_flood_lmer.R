@@ -349,6 +349,7 @@ summary(modelI)
 
 qplot(data=modeldata,CtrlPopShoot, Death, color = Origin)+geom_point(position="jitter")
 moddata <- ddply(modeldata, .(PopID, Origin, Latitude, CtrlPopShoot), summarize, popCount=length(PopID), popDeath=mean(Death))
+stfldeathTO <- moddata #for figure making
 qplot(data=moddata,CtrlPopShoot, popDeath, color = Origin, 
       xlab="Population mean shoot mass in control treatment", 
       ylab="Population mean days to Death in flood treatment", main="Performance in flood vs. control treatments") +geom_smooth(method=glm, se=TRUE)

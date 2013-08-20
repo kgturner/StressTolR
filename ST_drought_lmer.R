@@ -468,7 +468,7 @@ summary(modelg3)
 
 qplot(data=modeldata,CtrlPopShoot, Wilt, color = Origin)+geom_point(position="jitter")
 moddata <- ddply(modeldata, .(PopID, Origin, Latitude, CtrlPopShoot), summarize, popCount=length(PopID), popWilt=mean(Wilt))
-
+stdrwiltTO <- moddata #for making figures
 png("ST_performance_drwilt_shoot.png",width=800, height = 600, pointsize = 16)
 
 qplot(data=moddata,CtrlPopShoot, popWilt, color = Origin, 
