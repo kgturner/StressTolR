@@ -307,7 +307,7 @@ qplot(data=moddata,CtrlPopShoot, popTotWilt, color = Origin,
 dev.off()
 
 summary(modelg3)
-summary(modelg1)
+summary(modelg1, test="LRT")
 
 #remove inv outlier, largest inv pop US021
 moddata <- moddata[moddata$PopID!="US021",]

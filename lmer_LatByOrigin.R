@@ -214,7 +214,7 @@ CI.LS.poisson(modelI)
 qplot(data=modeldata,Latitude, LfCount1, color = Origin)
 moddata <- ddply(modeldata, .(PopID, Origin, Latitude), summarize, popLf=length(LfCount1), poplfavg=mean(LfCount1))
 moddata
-qplot(data=moddata,Latitude, poplfavg, color = Origin) +geom_smooth(method=lm, se=FALSE)
+qplot(data=moddata,Latitude, poplfavg, color = Origin) +geom_smooth(method=glm, se=TRUE)
 qplot(data=moddata[moddata$Latitude<50,],Latitude, poplfavg, color = Origin) +geom_smooth(method=lm, se=FALSE)
 
 ####Control, Origin * Lat####
@@ -465,11 +465,14 @@ modelL
 modelO<-lmer(bolt.bin ~ Latitude + (1|PopID/Mom), family=binomial,data=modeldata)
 anova(modelO,modelI) #test for significance of origin??? origin sig!
 model1
+
 # interaction.plot(response = modeldata$BoltedatH, x.factor = modeldata$Latitude, trace.factor = modeldata$Origin)
 qplot(data=modeldata,Latitude, BoltedatH, color = Origin)
 moddata <- ddply(modeldata, .(PopID, Origin, Latitude), summarize, popBolt=length(BoltedatH), popBoltavg=mean(bolt.bin))
 moddata
-qplot(data=moddata[moddata$Latitude<50,],Latitude, popBoltavg, color = Origin) +geom_smooth(method=lm, se=FALSE)
+qplot(data=moddata,Latitude, popBoltavg, color = Origin) +geom_smooth(method=glm, se=TRUE)
+
+qplot(data=moddata[moddata$Latitude<52.5,],Latitude, popBoltavg, color = Origin) +geom_smooth(method=glm, se=TRUE)
 
 
 #lsmean estimates
