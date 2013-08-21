@@ -446,8 +446,7 @@ dev.off()
 
 ###########trade-off figure###########
 stdrwiltTO <- moddata #for making figures
-blah <- stdrwiltTO
-stdrwiltTO <- blah
+
 levels(stdrwiltTO$Origin)[levels(stdrwiltTO$Origin)=="inv"] <- "Invasive"
 levels(stdrwiltTO$Origin)[levels(stdrwiltTO$Origin)=="nat"] <- "Native"
 
@@ -459,37 +458,44 @@ levels(stdrwiltTO$Origin)[levels(stdrwiltTO$Origin)=="nat"] <- "Native"
 #       xlab="Population mean shoot mass in control treatment", 
 #       ylab="Population mean days to Death in flood treatment", main="Performance in flood vs. control treatments") +geom_smooth(method=glm, se=TRUE)
 
-# pdf("ST trade0ff_color.pdf", useDingbats=FALSE)
-png("STtradeoff_color.png",width=800, height = 600, pointsize = 16)
+pdf("STtrade0ff_color.pdf", useDingbats=FALSE)
+# png("STtradeoff_color.png",width=800, height = 600, pointsize = 16)
 
 p1 <- ggplot(stdrwiltTO,aes(CtrlPopShoot, popWilt, color=Origin))+ geom_point()+
   geom_smooth(method=glm, se=TRUE)+
-  xlab("Population mean shoot mass (g) in control treatment")+
+  xlab("Population mean shoot mass [g] in control treatment")+
   ylab("Population mean days to wilt in drought treatment")+ 
   #title("Performance in drought vs. control treatments")+
+  theme_bw()+
   theme(legend.justification=c(1,1), legend.position=c(1,1))
  
-p1 <- p1 +  annotate('point',x = 1.46, y = 2, pch=8, color="red",parse=T,size=3) +
-  annotate('point',x = 1.54, y = 2, pch=8, color="red",parse=T,size=3) +
-  annotate(geom="text", x=1.5, y=2.3, label="Origin", size=5) +
-  annotate(geom="text", x=1.5, y=1.7, label="Origin*Control mass", size=5) +
-  annotate('point',x = 1.5, y = 1.4, pch=8, color="red",parse=T,size=3) 
+p1 <- p1 +  annotate('point',x = 1.94, y = 7, pch=8, color="red",parse=T,size=3) +
+  annotate('point',x = 2.06, y = 7, pch=8, color="red",parse=T,size=3) +
+  annotate(geom="text", x=2, y=7.3, label="Origin", size=5) +
+  annotate(geom="text", x=2, y=6.7, label="Origin*Control mass", size=5) +
+  annotate('point',x = 2, y = 6.4, pch=8, color="red",parse=T,size=3)+
+  annotate(geom="text", x=1.25, y=1, label="(a)",fontface="bold", size=5)+
+  theme(axis.title.x = element_text(size=15, face="bold", vjust=-0.4), 
+        axis.title.y = element_text(size=15, face="bold"),axis.text.x = element_text(size=12 ))
+# p1
 
 p2 <- ggplot(stfldeathTO, aes(CtrlPopShoot, popDeath, color=Origin))+geom_point()+
   geom_smooth(method=glm, se=TRUE)+
-  xlab("Population mean shoot mass (g) in control treatment")+
+  xlab("Population mean shoot mass [g] in control treatment")+
   ylab("Population mean days to death in flood treatment")+  
+  theme_bw()+
   theme(legend.position="none")
 #legend position(left/right,top/bottom)
 
-p2 <- p2 +  annotate(geom="text", x=1.5, y=26, label="Origin", size=5)+
-    annotate(geom="text", x=1.5, y=25, label="n.s.",fontface="italic", size=5)+
-    annotate(geom="text", x=1.5, y=24, label="Origin*Control mass",size=5)+ 
-  annotate('point',x = 1.46, y = 23, pch=8, color="red",parse=T, size=4)+
-  annotate('point',x = 1.54, y = 23, pch=8, color="red",parse=T, size=4) #+
-#   theme(axis.title.x = element_text(size=15, face="bold", vjust=-0.4), 
-#         axis.title.y = element_text(size=15, face="bold"),axis.text.x = element_text(size=12 ))
-
+p2 <- p2 +  annotate(geom="text", x=2, y=28.3, label="Origin", size=5)+
+    annotate(geom="text", x=2, y=27.5, label="n.s.",fontface="italic", size=5)+
+    annotate(geom="text", x=2, y=26.7, label="Origin*Control mass",size=5)+ 
+  annotate('point',x = 1.94, y = 25.9, pch=8, color="red",parse=T, size=3)+
+  annotate('point',x = 2.06, y = 25.9, pch=8, color="red",parse=T, size=3) +
+  annotate(geom="text", x=1.25, y=11, label="(b)",fontface="bold", size=5) +
+  theme(axis.title.x = element_text(size=15, face="bold", vjust=-0.4), 
+        axis.title.y = element_text(size=15, face="bold"),axis.text.x = element_text(size=12 ))
+# p2
 
 
 multiplot(p1,p2, cols=2)
