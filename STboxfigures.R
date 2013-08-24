@@ -42,17 +42,27 @@ head(m1)
 # ggplot(grdat, aes(Trt, ShootMass.g, fill=Origin))+geom_boxplot()
 
 ###plot in color###
+<<<<<<< HEAD
 # pdf("KTurnerFig2.pdf", useDingbats=FALSE, width=13.38)
 # png("STsizebox_color.png",width=800, height = 600, pointsize = 16)
 postscript("KTurnerFig2.eps", horizontal = FALSE, onefile = FALSE, paper = "special", height = 7, width = 13.38)
+=======
+pdf("KTurnerFig2.pdf", useDingbats=FALSE, width=13.38)
+# png("STsizebox_color.png",width=800, height = 600, pointsize = 16)
+# postscript("KTurnerFig2.eps", horizontal = FALSE, onefile = FALSE, paper = "special", height = 7, width = 13.38)
+>>>>>>> d61ff6d0a08baa77f6ed04be172f7aed2975cc6c
 
 p1 <- ggplot(grdat,aes(Trt, RootMass.g, fill=Origin))+
   geom_boxplot()+
   xlab("Stress Treatment")+ylab("Root mass [g]")+ 
   theme_bw()+
+<<<<<<< HEAD
   theme(legend.justification=c(1,1), legend.position=c(1,1),
         legend.title = element_text(size=14, face="bold"),
         legend.text = element_text(size = 13))
+=======
+  theme(legend.justification=c(1,1), legend.position=c(1,1))
+>>>>>>> d61ff6d0a08baa77f6ed04be172f7aed2975cc6c
 #legend position(left/right,top/bottom)
 p1 <- p1  + annotate('point',x = "Control", y = 5, pch=16, color="red",parse=T, size=4)+
   annotate('point',x = "Nutrient", y = 5, pch=16, color="red",parse=T, size=4)+
