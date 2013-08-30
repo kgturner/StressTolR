@@ -482,12 +482,12 @@ levels(stdrwiltTO$Origin)[levels(stdrwiltTO$Origin)=="nat"] <- "Native"
 #       xlab="Population mean shoot mass in control treatment", 
 #       ylab="Population mean days to Death in flood treatment", main="Performance in flood vs. control treatments") +geom_smooth(method=glm, se=TRUE)
 
-# pdf("KTurnerFig3.pdf", useDingbats=FALSE, width=6.29, height=11)
+pdf("KTurnerFig3.pdf", useDingbats=FALSE, width=6.29, height=11)
 # png("STtradeoff_color.png",width=800, height = 600, pointsize = 16)
 postscript("KTurnerFig3.eps", horizontal = FALSE, onefile = FALSE, paper = "special", height = 11, width = 6.29)
 
 p1 <- ggplot(stdrwiltTO,aes(CtrlPopShoot, popWilt, color=Origin))+ geom_point()+
-  geom_smooth(method=glm, se=TRUE)+
+  geom_smooth(method=glm, se=FALSE)+
   xlab("Population mean shoot mass [g] in control treatment")+
   ylab("Population mean days to wilt in drought treatment")+ 
   #title("Performance in drought vs. control treatments")+
@@ -507,7 +507,7 @@ p1 <- p1 +  annotate('point',x = 1.94, y = 7, pch=8, color="red",parse=T,size=3)
 # p1
 
 p2 <- ggplot(stfldeathTO, aes(CtrlPopShoot, popDeath, color=Origin))+geom_point()+
-  geom_smooth(method=glm, se=TRUE)+
+  geom_smooth(method=glm, se=FALSE)+
   xlab("Population mean shoot mass [g] in control treatment")+
   ylab("Population mean days to death in flood treatment")+  
   theme_bw()+

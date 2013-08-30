@@ -596,8 +596,10 @@ modeldata<-mom[!is.na(mom$Sdwt.log),]
 modeldata$blank<-1
 modeldata$blank<-as.factor(modeldata$blank)
 
+modelobar <- model2<-lmer(Sdwt.log ~ Origin *Latitude+(Origin|PopID), family=gaussian,data=modeldata)
 model2<-lmer(Sdwt.log ~ Origin *Latitude+(1|PopID), family=gaussian,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
 model3<-lmer(Sdwt.log ~ Origin *Latitude+(1|blank), family=gaussian,data=modeldata) # Test population effect
+anova(model2, modelobar)
 anova(model3,model2) # pop is sig. If it says there are 0 d.f. then what you want to do is a Chi-square test using the X2 value and 1 d.f. freedom to get the p value.
 1-pchisq(76.54,1)
 
