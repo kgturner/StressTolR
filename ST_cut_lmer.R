@@ -441,7 +441,17 @@ anova(modelg, test="LRT")
 # modelg5 <- glm(bolt.bin ~ Latitude+Origin, family=binomial,data=modeldata)
 # anova(modelg5, modelg4)
 
+#confidence intervals
 CI.LS.binomial(modelg1)
+
+#overdispersion
+deviance(modelg1) 
+summary(modelg1)$dispersion ## 1 (by definition)
+dfr <- df.residual(modelg1)
+deviance(modelg1)/dfr 
+d_2 <- sum(residuals(modelg1,"pearson")^2) ## 5.17
+(disp2 <- d_2/dfr)  ## 1.293
+
 
 summary(modelg)
 qplot(data=modeldata,Latitude, bolt.bin, color = Origin)
