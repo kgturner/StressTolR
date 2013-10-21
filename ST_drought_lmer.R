@@ -130,6 +130,7 @@ qchisq(0.8596,1,lower=FALSE)#chisq value
 modelg3<- glm(Death ~ Origin*CtrlPopShoot, family=poisson,data=modeldata)
 anova(modelg3,modelg1, test="LRT")
 qchisq(0.05969,1,lower=FALSE)#chisq value
+dispersiontest(modelg3)
 modelg2<- glm(Death ~Origin +CtrlPopShoot, family=poisson,data=modeldata)
 anova(modelg2,modelg3, test="LRT")
 qchisq(0.03689,1,lower=FALSE)#chisq value
@@ -297,6 +298,7 @@ anova(modelg1, modelg, test="LRT") #'Deviance' is chisq value
 modelg3<- glm(TotWilt ~ Origin*CtrlPopShoot, family=poisson,data=modeldata)
 anova(modelg3,modelg1, test="LRT")
 1-pchisq(5.5154, 1)
+dispersiontest(modelg3)
 modelg2<- glm(TotWilt ~Origin +CtrlPopShoot+Latitude, family=poisson,data=modeldata)
 anova(modelg2,modelg1, test="LRT")
 1-pchisq(4.8599, 1)
@@ -468,6 +470,7 @@ anova(modelg1, modelg, test="LRT") #'Deviance' is chisq value
 modelg3<- glm(Wilt ~ Origin*CtrlPopShoot, family=poisson,data=modeldata)
 anova(modelg3,modelg1, test="LRT")
 1-pchisq(3.3075, 1)
+dispersiontest(modelg3)
 modelg2<- glm(Wilt ~Origin +CtrlPopShoot, family=poisson,data=modeldata)
 anova(modelg2,modelg3, test="LRT")
 1-pchisq(4.8599, 1)
