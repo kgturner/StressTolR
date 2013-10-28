@@ -83,7 +83,7 @@ p2 <- p2 +  annotate('point',x = "Control", y = 36, pch=8, color="red",parse=T, 
   
   theme(axis.title.x = element_text(size=15, face="bold", vjust=-0.4), 
         axis.title.y = element_text(size=15, face="bold"),axis.text.x = element_text(size=12 ))
-p2
+# p2
 
 # multiplot(p1,p2, cols=2) #size plots only
 multiplot(p1,p2,p3, cols=3) #all st plots, code for p3 LH plot below
@@ -354,17 +354,17 @@ p3 <- p3 + theme(panel.grid.minor.y=element_blank(), panel.grid.major.y=element_
   #annotate(geom="text", x=(grBatHStd$xmax-grBatHStd$xmin)/2 + grBatHStd$xmin, y=grBatHStd$ymin+2, label=grBatHStd$BoltedatH, size=4)+ 
   theme(legend.position="none", axis.title.x = element_text(size=15, face="bold", vjust=-0.4), 
         axis.title.y = element_text(size=15, face="bold"),axis.text.x = element_text(size=12 ))+ 
-  annotate('point',x = 24, y = 50, pch=8, color="red",parse=T, size=4)+
-  annotate('point',x = 16, y = 50, pch=8, color="red",parse=T, size=4)+
-  annotate('point',x = 24, y = 50, pch=0, color="red",parse=T, size=6)+
-  annotate('point',x = 16, y = 50, pch=0, color="red",parse=T, size=6)+
+  annotate('point',x = 20, y = 50, pch=8, color="red",parse=T, size=4)+
+  annotate('point',x = 20, y = 54, pch=8, color="red",parse=T, size=4)+
+  annotate('point',x = 20, y = 50, pch=0, color="red",parse=T, size=6)+
+  annotate('point',x = 20, y = 54, pch=0, color="red",parse=T, size=6)+
   
   annotate('point',x = 60, y = 50, pch=8, color="red",parse=T,size=4)+
-  annotate('point',x = 65, y = 50, pch=8, color="red",parse=T,size=4)+
-  annotate('point',x = 55, y = 50, pch=8, color="red",parse=T,size=4)+
+  annotate('point',x = 60, y = 54, pch=8, color="red",parse=T,size=4)+
+  annotate('point',x = 60, y = 58, pch=8, color="red",parse=T,size=4)+
   annotate('point',x = 60, y = 50, pch=0, color="red",parse=T,size=6)+
-  annotate('point',x = 65, y = 50, pch=0, color="red",parse=T,size=6)+
-  annotate('point',x = 55, y = 50, pch=0, color="red",parse=T,size=6)+
+  annotate('point',x = 60, y = 54, pch=0, color="red",parse=T,size=6)+
+  annotate('point',x = 60, y = 58, pch=0, color="red",parse=T,size=6)+
   
   annotate(geom="text", x=2.5, y=98, label="(c)",fontface="bold", size=5)
 
@@ -507,15 +507,16 @@ p1 <- ggplot(stdrwiltTO,aes(CtrlPopShoot, popWilt, color=Origin))+ geom_point()+
         legend.title = element_text(size=14, face="bold"),
         legend.text = element_text(size = 13))
  
-p1 <- p1 +  annotate('point',x = 1.94, y = 7, pch=8, color="red",parse=T,size=3) +
-  annotate('point',x = 2.06, y = 7, pch=8, color="red",parse=T,size=3) +
-  annotate(geom="text", x=2, y=7.3, label="Origin", size=5) +
-  annotate(geom="text", x=2, y=6.7, label="Origin*Control mass", size=5) +
-  annotate('point',x = 2, y = 6.4, pch=8, color="red",parse=T,size=3)+
+p1 <- p1 +  
+#   annotate('point',x = 1.94, y = 7, pch=8, color="red",parse=T,size=3) +
+#   annotate('point',x = 2.06, y = 7, pch=8, color="red",parse=T,size=3) +
+#   annotate(geom="text", x=2, y=7.3, label="Origin", size=5) +
+  annotate(geom="text", x=2, y=7.3, label="Origin*Control mass", size=5) +
+  annotate('point',x = 2, y = 7, pch=8, color="red",parse=T,size=3)+
   annotate(geom="text", x=1.25, y=1, label="(a)",fontface="bold", size=5)+
   theme(axis.title.x = element_text(size=15, face="bold", vjust=-0.4), 
         axis.title.y = element_text(size=15, face="bold"),axis.text.x = element_text(size=12 ))
-# p1
+p1
 
 p2 <- ggplot(stfldeathTO, aes(CtrlPopShoot, popDeath, color=Origin))+geom_point()+
   geom_smooth(method=glm, se=FALSE)+
@@ -525,15 +526,16 @@ p2 <- ggplot(stfldeathTO, aes(CtrlPopShoot, popDeath, color=Origin))+geom_point(
   theme(legend.position="none")
 #legend position(left/right,top/bottom)
 
-p2 <- p2 +  annotate(geom="text", x=2, y=28.3, label="Origin", size=5)+
-    annotate(geom="text", x=2, y=27.5, label="n.s.",fontface="italic", size=5)+
-    annotate(geom="text", x=2, y=26.7, label="Origin*Control mass",size=5)+ 
+p2 <- p2 +  
+#   annotate(geom="text", x=2, y=28.3, label="Origin", size=5)+
+#   annotate(geom="text", x=2, y=27.5, label="n.s.",fontface="italic", size=5)+
+  annotate(geom="text", x=2, y=26.7, label="Origin*Control mass",size=5)+ 
   annotate('point',x = 1.94, y = 25.9, pch=8, color="red",parse=T, size=3)+
   annotate('point',x = 2.06, y = 25.9, pch=8, color="red",parse=T, size=3) +
   annotate(geom="text", x=1.25, y=11, label="(b)",fontface="bold", size=5) +
   theme(axis.title.x = element_text(size=15, face="bold", vjust=-0.4), 
         axis.title.y = element_text(size=15, face="bold"),axis.text.x = element_text(size=12 ))
-# p2
+p2
 
 
 multiplot(p1,p2, cols=1)
