@@ -74,11 +74,16 @@ p2 <- ggplot(grdat, aes(Trt, LfCountH, fill=Origin))+geom_boxplot()+xlab("Treatm
 p2 <- p2 +  annotate('point',x = "Control", y = 36, pch=8, color="red",parse=T, size=4)+
   annotate('point',x = "Control", y = 38, pch=8, color="red",parse=T, size=4)+
   annotate('point',x = "Control", y = 40, pch=8, color="red",parse=T, size=4)+
+  
   annotate('point',x = "Herbivory", y = 40, pch=8, color="red",parse=T, size=4)+
+  
   annotate(geom="text", x="Early Control", y=80, label="(b)",fontface="bold", size=5)+
+  annotate('point', x="Early Control", y=38, pch=8, color="red", parse=T, size=4)+
+  annotate('point', x="Early Control", y=38, pch=0, color="red", parse=T, size=6)+
+  
   theme(axis.title.x = element_text(size=15, face="bold", vjust=-0.4), 
         axis.title.y = element_text(size=15, face="bold"),axis.text.x = element_text(size=12 ))
-# p2
+p2
 
 # multiplot(p1,p2, cols=2) #size plots only
 multiplot(p1,p2,p3, cols=3) #all st plots, code for p3 LH plot below
@@ -349,12 +354,18 @@ p3 <- p3 + theme(panel.grid.minor.y=element_blank(), panel.grid.major.y=element_
   #annotate(geom="text", x=(grBatHStd$xmax-grBatHStd$xmin)/2 + grBatHStd$xmin, y=grBatHStd$ymin+2, label=grBatHStd$BoltedatH, size=4)+ 
   theme(legend.position="none", axis.title.x = element_text(size=15, face="bold", vjust=-0.4), 
         axis.title.y = element_text(size=15, face="bold"),axis.text.x = element_text(size=12 ))+ 
-  annotate('point',x = 20, y = 50, pch=8, color="red",parse=T, size=4)+
-  annotate('point',x = 25, y = 50, pch=8, color="red",parse=T, size=4)+
-  annotate('point',x = 15, y = 50, pch=8, color="red",parse=T, size=4)+
+  annotate('point',x = 24, y = 50, pch=8, color="red",parse=T, size=4)+
+  annotate('point',x = 16, y = 50, pch=8, color="red",parse=T, size=4)+
+  annotate('point',x = 24, y = 50, pch=0, color="red",parse=T, size=6)+
+  annotate('point',x = 16, y = 50, pch=0, color="red",parse=T, size=6)+
+  
   annotate('point',x = 60, y = 50, pch=8, color="red",parse=T,size=4)+
   annotate('point',x = 65, y = 50, pch=8, color="red",parse=T,size=4)+
   annotate('point',x = 55, y = 50, pch=8, color="red",parse=T,size=4)+
+  annotate('point',x = 60, y = 50, pch=0, color="red",parse=T,size=6)+
+  annotate('point',x = 65, y = 50, pch=0, color="red",parse=T,size=6)+
+  annotate('point',x = 55, y = 50, pch=0, color="red",parse=T,size=6)+
+  
   annotate(geom="text", x=2.5, y=98, label="(c)",fontface="bold", size=5)
 
 p3
