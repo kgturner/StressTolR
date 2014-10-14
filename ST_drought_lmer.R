@@ -6,6 +6,17 @@ library(lsmeans)
 library(ggplot2)
 library(plyr)
 
+#open data files
+# mom<-read.table(file.choose(), header=T, sep="\t", quote='"', row.names=1) #momsubset
+co<-read.table(file.choose(), header=T, sep="\t", quote='"', row.names=1) #controlsubset
+# m1<-read.table(file.choose(), header=T, sep="\t", quote='"', row.names=1) #m1subset
+# al<-read.table("STAllosubset.txt", header=T, sep="\t", quote='"', row.names=1) #allosubset
+# n<-read.table(file.choose(), header=T, sep="\t", quote='"', row.names=1) #nutsubset
+# cu<-read.table(file.choose(), header=T, sep="\t", quote='"', row.names=1) #cutsubset
+d<-read.table(file.choose(), header=T, sep="\t", quote='"', row.names=1) #droughtsubset
+# f<-read.table(file.choose(), header=T, sep="\t", quote='"', row.names=1) #floodsubset
+
+
 #pop control means to look at stress treatments
 co<-read.table("STControlsubset.txt", header=T, sep="\t", quote='"', row.names=1) #controlsubset
 se <- function(x) sqrt(var(x)/length(x))
@@ -22,7 +33,7 @@ names(dLR) <- names(d)[8:10]
 # dmodels <- lapply(names(d)[8:9],function(n) CGtrait.models.int(n,d))
 # dmodels
 
-###Drought, death, popID not sig, do by hand###
+####Drought, death, popID not sig, do by hand####
 modeldata<-d[!is.na(d$Death),]
 modeldata$blank<-1
 modeldata$blank<-as.factor(modeldata$blank)
@@ -185,7 +196,7 @@ summary(modelg3)
 anova(modelg3, test="LRT")
 
 
-###drought, total wilt
+####drought, total wilt####
 modeldata<-d[!is.na(d$TotWilt),]
 modeldata$blank<-1
 modeldata$blank<-as.factor(modeldata$blank)
@@ -368,7 +379,7 @@ anova(modelg4, modelg2, test="LRT")
 modelg5 <- glm(TotWilt~Latitude, family=poisson, data=modeldata)
 anova(modelg5, modelg4, test="LRT")
 
-###drought, wilt
+####drought, wilt####
 modeldata<-d[!is.na(d$Wilt),]
 modeldata$blank<-1
 modeldata$blank<-as.factor(modeldata$blank)
@@ -484,7 +495,9 @@ summary(modelg3)
 
 qplot(data=modeldata,CtrlPopShoot, Wilt, color = Origin)+geom_point(position="jitter")
 moddata <- ddply(modeldata, .(PopID, Origin, Latitude, CtrlPopShoot), summarize, popCount=length(PopID), popWilt=mean(Wilt))
+write.table(moddata, "STdrought_forplots.txt", sep="\t", row.names=TRUE, col.names=TRUE)
 stdrwiltTO <- moddata #for making figures
+
 png("ST_performance_drwilt_shoot.png",width=800, height = 600, pointsize = 16)
 
 qplot(data=moddata,CtrlPopShoot, popWilt, color = Origin, 
