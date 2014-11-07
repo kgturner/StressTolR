@@ -1,7 +1,8 @@
 #ST stress treatment - simulated herbivory
 #Stress Tolerance, REML, using lme4
 #mixed effect models 
-library(lme4)
+# library(lme4)
+library(lme4.0)
 library(lsmeans)
 library(ggplot2)
 library(plyr)
@@ -196,6 +197,7 @@ modelL <- lmer(CrownDiam.mm ~ Latitude +(1|PopID), family=gaussian,data=modeldat
 anova(modelL,modelI)
 
 lsmeans(modelI, ~Origin, conf=95)
+modelI
 
 # #explicit tradeoff - using lf count
 # modeldata <- merge(modeldata, comeans, all.x=TRUE)
@@ -291,6 +293,7 @@ modelOraw<-lmer(LfCountH ~ Latitude + (Origin|PopID/Mom), family=poisson,data=mo
 anova(modelOraw,modelI) #test for significance of origin 
 
 CI.LS.poisson(modelI)
+modelI
 
 # #explicit tradeoff - using lf count
 # modeldata <- merge(modeldata, comeans, all.x=TRUE)
@@ -441,6 +444,8 @@ anova(modelg, test="LRT")
 # modelg5 <- glm(bolt.bin ~ Latitude+Origin, family=binomial,data=modeldata)
 # anova(modelg5, modelg4)
 
+summary(modelg)
+
 #confidence intervals
 CI.LS.binomial(modelg1)
 
@@ -558,6 +563,7 @@ modelO<-lmer(BoltDate ~ Latitude + (1|PopID/Mom), family=poisson,data=modeldata)
 anova(modelO,modelI) #test for significance of origin - origin not sig!
 
 CI.LS.poisson(modelI)
+summary(modelI)
 
 #cut, boltdate, extra covariates#
 modeldata<-cu[!is.na(cu$BoltDate),]

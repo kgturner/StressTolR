@@ -1,7 +1,8 @@
 #ST stress treatment - flooding
 #Stress Tolerance, REML, using lme4
 #mixed effect models 
-library(lme4)
+# library(lme4)
+library(lme4.0)
 library(lsmeans)
 library(ggplot2)
 library(plyr)
@@ -59,6 +60,7 @@ anova(modelg2,modelg1, test="LRT")
 1-pchisq(9.0533, 1)
 
 CI.LS.poisson(modelg1)
+summary(modelg1)
 
 #overdispersion
 library(AER)
@@ -173,6 +175,7 @@ anova(modelg2,modelg1, test="LRT")
 1-pchisq(9.0533, 1)
 
 CI.LS.poisson(modelg3)
+summary(modelg1)
 
 #overdispersion
 library(AER)
@@ -274,6 +277,7 @@ modelO<-lmer(Death ~ Latitude + (1|PopID), family=poisson,data=modeldata)
 anova(modelO,modelI) #test for significance of origin - origin not sig
 
 CI.LS.poisson(modelI)
+summary(modelI)
 
 # #explicit tradeoff - using lf count
 # modeldata <- merge(modeldata, comeans, all.x=TRUE)

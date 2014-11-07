@@ -1,7 +1,8 @@
 #Stress treatment - Nutrient deficiency
 #Stress Tolerance, REML, using lme4
 #mixed effect models 
-library(lme4)
+# library(lme4)
+library(lme4.0)
 library(lsmeans)
 library(ggplot2)
 library(plyr)
@@ -147,6 +148,7 @@ anova(modelOraw,modelI)
 # anova(modelO,modelL)
 
 lsmeans(modelI, ~Origin, conf=95)
+modelI
 
 #explicit tradeoff - using lf count
 modeldata <- merge(modeldata, comeans, all.x=TRUE)
@@ -243,6 +245,7 @@ anova(modelOraw,modelI)
 # anova(modelO,modelL)
 
 CI.LS.gaussian(modelI)
+modelI
 
 #explicit tradeoff - using lf count
 modeldata <- merge(modeldata, comeans, all.x=TRUE)
@@ -338,6 +341,7 @@ modelO<-lmer(CrownDiam.mm ~ (1|PopID), family=gaussian,data=modeldata)
 anova(modelO,modelL)
 
 lsmeans(modelL, ~Origin, conf=95)
+modelI
 
 #explicit tradeoff - using lf count
 modeldata <- merge(modeldata, comeans, all.x=TRUE)
@@ -432,6 +436,7 @@ modelO<-lmer(lxwH ~ (1|PopID), family=gaussian,data=modeldata)
 anova(modelO,modelL)
 
 lsmeans(modelL, ~Origin, conf=95)
+modelI
 
 #explicit tradeoff - using lf count
 modeldata <- merge(modeldata, comeans, all.x=TRUE)

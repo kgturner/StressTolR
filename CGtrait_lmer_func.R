@@ -1,6 +1,7 @@
 ####Common Garden trait analysis####
 #using lmer, REML mixed models#
-library(lme4)
+# library(lme4)
+library(lme4.0)
 #with Origin and latitude as fixed effects, population and mom as random effects#
 #custom functions
 

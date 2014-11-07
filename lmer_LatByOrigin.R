@@ -1,7 +1,8 @@
 ###ST mixed FX models, focused on Origin BY Latitude###
 #Stress Tolerance, REML, using lme4
 #mixed effect models 
-library(lme4)
+# library(lme4)
+library(lme4.0)
 library(lsmeans)
 library(ggplot2)
 library(plyr)
@@ -51,7 +52,8 @@ head(al)
 alLR <- lapply(names(al)[c(11:13, 20)],function(n) CGtrait.LR.int(n,al)) #crow, shoot, root, root.log, all gaussian
 names(alLR) <- names(al)[c(11:13, 20)]
 alLR #check out LRs of models. Model progression logical?
-almodels <- CGtrait.models.int("CrownDiam.mmA",al)
+almodels <- lapply(names(al)[c(11:13, 20)],function(n) CGtrait.models.int(n,al))
+names(almodels) <- names(al)[c(11:13, 20)]
 almodels
 
 ###allo shoot, mom is sig, do by hand
@@ -81,6 +83,7 @@ modelOraw<-lmer(ShootMass.gA ~ Latitude +(1|PopID/Mom), family=gaussian,data=mod
 anova(modelOraw,modelI) #test for significance of origin - origin not sig
 
 lsmeans(modelI, ~ Origin, conf=95)
+modelI
 
 ###allo, root mass###
 modeldata<-al[!is.na(al$RootA.log),]
@@ -108,6 +111,7 @@ modelOraw<-lmer(RootA.log ~ Latitude + (1|PopID/Mom), family=gaussian,data=model
 anova(modelOraw,modelI) #test for significance of origin - origin not sig
 
 CI.LS.poisson(modelI)
+modelI
 
 modelIRack <- lmer(RootA.log  ~ Origin + Latitude + (1|PopID/Mom)+ (1|Rack), family=gaussian,data=modeldata)
 anova(modelIRack, modelI)
@@ -145,6 +149,7 @@ modelOraw<-lmer(CrownDiam.mmA ~ Latitude + (1|PopID), family=gaussian,data=model
 anova(modelOraw,modelI)
 
 lsmeans(modelI, ~Origin, conf=95)
+modelI
 
 #####m1, Origin * Lat#####
 m1<-read.table("STm1subset.txt", header=T, sep="\t", quote='"', row.names=1) #m1subset
@@ -155,7 +160,7 @@ m1lf <- CGtrait.LR.int("LfCount1", m1, family=poisson)#poisson distribution
 m1lfmodels <- CGtrait.models.int("LfCount1", m1, family=poisson)
 
 ###m1, lxw, mom sig, do by hand###
-# m1$lxw <- m1$LfLgth1*m1$LfWdth1
+m1$lxw <- m1$LfLgth1*m1$LfWdth1
 modeldata<-m1[!is.na(m1$lxw),]
 modeldata$blank<-1
 modeldata$blank<-as.factor(modeldata$blank)
@@ -180,6 +185,7 @@ anova(modelO,modelL) #test for significance of origin - origin not sig....?
 #mom and popID sig, but not Origin! for either log or raw data
 
 lsmeans(modelL, ~ Origin, conf=95)
+modelI
 
 ####m1, control, lf count####
 modeldata<-m1[!is.na(m1$LfCount1),]
@@ -260,7 +266,7 @@ anova(modelL, modelI)
 modelOraw<-lmer(lxwH ~ Latitude +(1|PopID/Mom), family=gaussian,data=modeldata)
 anova(modelOraw,modelI) #test for significance of origin - origin NOT sig....!
 
-modelOraw
+modelI
 lsmeans(modelI, ~ Origin, conf=95)
 # with obar(barely non-sig, doesn't change anything except makes PopID sig)
 # model2<-lmer(lxwH ~ Origin *Latitude +(Origin|PopID), family=gaussian,data=modeldata) # Removes maternal family variance to test if it is a significant random effect
@@ -307,7 +313,7 @@ print(anova(modelOraw,modelI), digits = 22)
 (lambda <- (-2)*(-681.7698599890596824480 - (-681.7873280911552456018)))
 1-pchisq(-0.0349362,1)
 
-modelOraw
+modelI
 lsmeans(modelI, ~Origin, conf=95)
 
 ##control, shoot
@@ -332,6 +338,7 @@ modelOraw<-lmer(ShootMass.g ~ Latitude +(1|PopID), family=gaussian,data=modeldat
 anova(modelOraw,modelI)
 
 lsmeans(modelI, ~ Origin, conf=95)
+modelI
 
 ##control, root
 modeldata<-co[!is.na(co$RootH.log),]
@@ -354,6 +361,7 @@ modelOraw<-lmer(RootH.log ~ Latitude +(1|PopID), family=gaussian,data=modeldata)
 anova(modelOraw,modelI)
 
 CI.LS.poisson(modelI)
+modelI
 
 ####control, lf count, mom sig so do by hand#####
 #poisson on raw data
@@ -361,6 +369,7 @@ modeldata<-co[!is.na(co$LfCountH),]
 modeldata$blank<-1
 modeldata$blank<-as.factor(modeldata$blank)
 modeldata$Mom<-as.factor(modeldata$Mom)
+modeldata <- subset(modeldata, LfCountH<40)
 
 modelobar<-lmer(LfCountH ~ Origin *Latitude +(Origin|PopID/Mom), family=poisson,data=modeldata)
 model1raw<-lmer(LfCountH ~ Origin *Latitude +(1|PopID/Mom), family=poisson,data=modeldata)
@@ -379,7 +388,7 @@ anova(modelL, modelI)
 modelOraw<-lmer(LfCountH ~Latitude+(Origin|PopID/Mom), family=poisson,data=modeldata)
 anova(modelOraw,modelI) #test for significance of origin - origin NOT sig....!
 
-modelI
+summary(modelI)
 CI.poisson(modelI)
 CI.poisson(modelL)
 CI.LS.poisson(modelI)
@@ -439,6 +448,7 @@ modelO<-lmer(BoltDate ~  (1|PopID/Mom), family=poisson,data=modeldata)
 anova(modelO,modelL) #test for significance of origin - origin not sig!
 
 CI.LS.poisson(modelL)
+summary(modelI)
 
 ###control boltedatH, mom sig, do by hand, binomial
 #all plants, not just bolters
