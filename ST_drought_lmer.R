@@ -7,7 +7,7 @@ library(lsmeans)
 library(ggplot2)
 library(plyr)
 
-#open data files
+#open data files (or see below)
 # mom<-read.table(file.choose(), header=T, sep="\t", quote='"', row.names=1) #momsubset
 co<-read.table(file.choose(), header=T, sep="\t", quote='"', row.names=1) #controlsubset
 # m1<-read.table(file.choose(), header=T, sep="\t", quote='"', row.names=1) #m1subset

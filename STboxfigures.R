@@ -558,12 +558,12 @@ stdrwiltTO <-read.delim("STdrought_forplots.txt", header=T, sep="\t", row.names=
 levels(stdrwiltTO$Origin)[levels(stdrwiltTO$Origin)=="inv"] <- "Invasive"
 levels(stdrwiltTO$Origin)[levels(stdrwiltTO$Origin)=="nat"] <- "Native"
 
-pdf("KTurnerFig3.pdf", useDingbats=FALSE, width=6.29, height=11)
-# png("STtradeoff_color.png",width=800, height = 600, pointsize = 16)
-postscript("KTurnerFig3.eps", horizontal = FALSE, onefile = FALSE, paper = "special", height = 11, width = 6.29)
+# pdf("KTurnerFig3.pdf", useDingbats=FALSE, width=6.29, height=11)
+png("STtradeoff_color.png",width=400, height = 800, pointsize = 16)
+# postscript("KTurnerFig3.eps", horizontal = FALSE, onefile = FALSE, paper = "special", height = 11, width = 6.29)
 
 p1 <- ggplot(stdrwiltTO,aes(CtrlPopShoot, popWilt, color=Origin))+ geom_point()+
-  geom_smooth(method=glm, se=FALSE)+
+  geom_smooth(method=glm, se=TRUE)+
   xlab("Population mean shoot mass [g] in control treatment")+
   ylab("Population mean days to wilt in drought treatment")+ 
   #title("Performance in drought vs. control treatments")+
@@ -584,7 +584,7 @@ p1 <- p1 +
 p1
 
 p2 <- ggplot(stfldeathTO, aes(CtrlPopShoot, popDeath, color=Origin))+geom_point()+
-  geom_smooth(method=glm, se=FALSE)+
+  geom_smooth(method=glm, se=TRUE)+
   xlab("Population mean shoot mass [g] in control treatment")+
   ylab("Population mean days to death in flood treatment")+  
   theme_bw()+

@@ -253,7 +253,7 @@ qplot(data=moddata,CtrlPopShoot, popYellow, color = Origin,
       ylab="Population mean days to Yellow in drought treatment", main="Performance in drought vs. control treatments") +geom_smooth(method=glm, se=TRUE)
 
 
-##flood, death
+####flood, death####
 modeldata<-f[!is.na(f$Death),]
 modeldata$blank<-1
 modeldata$blank<-as.factor(modeldata$blank)
